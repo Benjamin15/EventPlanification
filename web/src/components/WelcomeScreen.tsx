@@ -5,7 +5,7 @@ import './WelcomeScreen.css';
 
 interface WelcomeScreenProps {
   onJoinEvent: (eventName: string, participantName: string) => Promise<void>;
-  onCreateEvent: (eventData: EventCreate) => Promise<void>;
+  onCreateEvent: (eventData: EventCreate, creatorName: string) => Promise<void>;
   loading?: boolean;
 }
 
@@ -18,8 +18,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   const [participantName, setParticipantName] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const handleCreateEvent = async (eventData: EventCreate) => {
-    await onCreateEvent(eventData);
+  const handleCreateEvent = async (eventData: EventCreate, creatorName: string) => {
+    await onCreateEvent(eventData, creatorName);
     setIsCreateModalOpen(false);
   };
 

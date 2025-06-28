@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de diagnostic - Chalet Vibe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover { background-color: #0056b3; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏔️ Diagnostic Chalet Vibe</h1>
+    
+    <div class="test-section">
+        <h3>1. Test de connexion backend</h3>
+        <button onclick="testBackendConnection()">Tester la connexion</button>
+        <div id="connection-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test de récupération des événements</h3>
+        <button onclick="testGetEvents()">Récupérer les événements</button>
+        <div id="events-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test de création d'événement</h3>
+        <button onclick="testCreateEvent()">Créer un événement test</button>
+        <div id="create-result"></div>
+    </div>
+
+    <script>
+        async function testBackendConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<p>Test en cours...</p>';
+
+            try {
+                const response = await fetch('http://localhost:8000/');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p>✅ Backend accessible!</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(`Status: ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ Erreur de connexion: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testGetEvents() {
+            const resultDiv = document.getElementById('events-result');
+            resultDiv.innerHTML = '<p>Test en cours...</p>';
+
+            try {
+                const response = await fetch('http://localhost:8000/events/');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p>✅ Événements récupérés! (${data.length} événements)</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(`Status: ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ Erreur: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testCreateEvent() {
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.innerHTML = '<p>Test en cours...</p>';
+
+            const eventData = {
+                name: 'Test Diagnostic ' + new Date().toISOString(),
+                description: 'Événement créé depuis le diagnostic',
+                location: 'Test Location',
+                start_date: '2025-08-01T10:00:00',
+                end_date: '2025-08-03T18:00:00',
+                chalet_link: 'https://example.com/test'
+            };
+
+            try {
+                const response = await fetch('http://localhost:8000/events/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(eventData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p>✅ Événement créé avec succès!</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const errorData = await response.text();
+                    throw new Error(`Status: ${response.status}, Response: ${errorData}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <p>❌ Erreur: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

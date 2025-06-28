@@ -78,9 +78,16 @@ class CarBase(BaseModel):
     license_plate: str
     max_passengers: int = 4
     fuel_cost: float = 0.0
+    rental_cost: Optional[float] = None
+    actual_fuel_cost: Optional[float] = None
+    driver_id: Optional[int] = None
 
 class CarCreate(CarBase):
     event_id: int
+
+class CarUpdate(BaseModel):
+    actual_fuel_cost: Optional[float] = None
+    driver_id: Optional[int] = None
 
 class Car(CarBase):
     id: int

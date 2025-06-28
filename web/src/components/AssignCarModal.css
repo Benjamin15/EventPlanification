@@ -1,0 +1,302 @@
+.assign-car-modal {
+  max-width: 800px;
+  width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.assign-car-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.assign-section,
+.current-assignments {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 24px;
+}
+
+.assign-section h3,
+.current-assignments h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Sélection des participants */
+.participant-selection {
+  margin-bottom: 24px;
+}
+
+.participant-selection label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.participant-selection select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  cursor: pointer;
+}
+
+.participant-selection select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.participant-selection select:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Grille des voitures */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.car-option {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  background: white;
+  transition: all 0.2s;
+}
+
+.car-option:hover:not(.full) {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.car-option.full {
+  opacity: 0.6;
+  background: #f9fafb;
+}
+
+.car-info {
+  margin-bottom: 16px;
+}
+
+.car-info h4 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.car-info p {
+  margin: 4px 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.car-info .fuel-cost {
+  color: #f39c12;
+  font-weight: 600;
+}
+
+.assign-button {
+  width: 100%;
+  padding: 10px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.assign-button:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.assign-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Assignations actuelles */
+.assignments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.car-assignment {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.car-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.car-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.capacity {
+  background: #3b82f6;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.fuel-cost {
+  color: #f39c12;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.rental-cost {
+  color: #9b59b6;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.passengers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.passenger-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.passenger-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.remove-button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.remove-button:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.remove-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.no-passengers {
+  color: #6b7280;
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+  padding: 12px;
+}
+
+.info-message {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin: 0;
+}
+
+/* Modal footer */
+.modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-modal-button {
+  padding: 10px 24px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-modal-button:hover:not(:disabled) {
+  background: #4b5563;
+}
+
+.close-modal-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .assign-car-modal {
+    width: 95vw;
+    margin: 10px;
+  }
+  
+  .assign-car-content {
+    padding: 20px;
+    gap: 24px;
+  }
+  
+  .cars-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .car-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .car-header h4 {
+    min-width: auto;
+  }
+  
+  .passenger-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

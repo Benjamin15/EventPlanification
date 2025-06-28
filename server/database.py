@@ -39,7 +39,7 @@ class Participant(Base):
     
     # Relations
     event = relationship("Event", back_populates="participants")
-    car = relationship("Car", back_populates="passengers")
+    car = relationship("Car", back_populates="passengers", foreign_keys=[car_id])
     meal_assignments = relationship("MealAssignment", back_populates="participant")
 
 class Meal(Base):
@@ -91,10 +91,14 @@ class Car(Base):
     license_plate = Column(String)
     max_passengers = Column(Integer, default=4)
     fuel_cost = Column(Float, default=0.0)
+    rental_cost = Column(Float, default=0.0, nullable=True)
+    actual_fuel_cost = Column(Float, default=0.0, nullable=True)  # Coût réel d'essence après le trajet
+    driver_id = Column(Integer, ForeignKey("participants.id"), nullable=True)  # ID du conducteur participant
     
     # Relations
     event = relationship("Event", back_populates="cars")
-    passengers = relationship("Participant", back_populates="car")
+    passengers = relationship("Participant", back_populates="car", foreign_keys="Participant.car_id")
+    driver = relationship("Participant", foreign_keys=[driver_id], post_update=True)
 
 class EventPhoto(Base):
     __tablename__ = "event_photos"

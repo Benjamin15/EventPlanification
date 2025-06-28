@@ -38,7 +38,7 @@ function App() {
     }
   };
 
-  const handleCreateEvent = async (eventData: EventCreate) => {
+  const handleCreateEvent = async (eventData: EventCreate, creatorName: string) => {
     setLoading(true);
     setError(null);
 
@@ -49,7 +49,7 @@ function App() {
       // Auto-rejoindre en tant que créateur
       const participantData: ParticipantCreate = {
         event_id: event.id,
-        name: 'Organisateur',
+        name: creatorName,
       };
       const participant = await apiService.joinEvent(participantData);
       

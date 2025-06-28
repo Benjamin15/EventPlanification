@@ -7,7 +7,7 @@ import './CreateEventModal.css';
 interface CreateEventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateEvent: (event: EventCreate) => Promise<any>;
+  onCreateEvent: (event: EventCreate, creatorName: string) => Promise<any>;
 }
 
 const CreateEventModal: React.FC<CreateEventModalProps> = ({
@@ -23,6 +23,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
     end_date: '',
     chalet_link: '',
   });
+  const [creatorName, setCreatorName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -34,6 +35,11 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
       required: true, 
       minLength: 3,
       maxLength: 100 
+    },
+    creatorName: {
+      required: true,
+      minLength: 2,
+      maxLength: 50
     },
     location: { 
       required: true, 
@@ -125,6 +131,24 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
     clearFieldError(name);
     clearValidationError(name);
     validateSingleField(name, value);
+
+    // Vérification spéciale pour le nom de l'événement
+    if (name === 'name' && value.trim().length >= 3) {
+      // Debounce la vérification pour éviter trop d'appels API
+      setTimeout(async () => {
+        try {
+          const result = await apiService.checkEventNameAvailability(value.trim());
+          if (!result.available) {
+            addError({
+              message: `Ce nom est déjà utilisé. Essayez: "${value.trim()} 2025" ou "${value.trim()} - ${new Date().getFullYear()}"`,
+              field: 'name'
+            });
+          }
+        } catch (error) {
+          console.warn('Erreur lors de la vérification du nom:', error);
+        }
+      }, 800); // Attendre 800ms après la dernière frappe
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -133,9 +157,9 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
     clearValidationErrors();
     
     // Validation complète du formulaire
-    const isValid = validateForm(formData);
+    const isValid = validateForm({...formData, creatorName}) && validateSingleField('creatorName', creatorName);
 
-    if (!isValid) {
+    if (!isValid || !creatorName.trim()) {
       addError({
         message: 'Veuillez corriger les erreurs dans le formulaire'
       });
@@ -145,7 +169,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
     setIsLoading(true);
 
     try {
-      const createdEvent = await onCreateEvent(formData);
+      const createdEvent = await onCreateEvent(formData, creatorName.trim());
       
       // Upload de l'image si une image est sélectionnée
       if (selectedImage && createdEvent?.id) {
@@ -206,7 +230,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 
         <form onSubmit={handleSubmit} className="modal-form">
           {/* Erreurs générales */}
-          {errors.filter(e => !e.field).map((error, index) => (
+          {(errors || []).filter(e => !e.field).map((error, index) => (
             <div key={index} className="error-message general-error">
               {error.message}
             </div>
@@ -226,6 +250,28 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
             />
             {(fieldErrors.name || validationErrors.name) && (
               <span className="error-message">{fieldErrors.name || validationErrors.name}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="creatorName">Votre nom *</label>
+            <input
+              type="text"
+              id="creatorName"
+              name="creatorName"
+              value={creatorName}
+              onChange={(e) => {
+                setCreatorName(e.target.value);
+                clearFieldError('creatorName');
+                clearValidationError('creatorName');
+                validateSingleField('creatorName', e.target.value);
+              }}
+              className={fieldErrors.creatorName || validationErrors.creatorName ? 'error' : ''}
+              disabled={isLoading}
+              placeholder="Votre nom complet"
+            />
+            {(fieldErrors.creatorName || validationErrors.creatorName) && (
+              <span className="error-message">{fieldErrors.creatorName || validationErrors.creatorName}</span>
             )}
           </div>
 

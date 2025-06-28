@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { Event, Participant, CostSummary, MealCreate, ShoppingItemCreate, CarCreate } from '../types';
+import { Event, Participant, CostSummary, MealCreate, ShoppingItemCreate, CarCreate, CarUpdate, Car } from '../types';
 import { apiService } from '../services/api';
 import { realtimeService, EventUpdate } from '../services/realtime';
 import AddMealModal from './AddMealModal';
 import AddShoppingItemModal from './AddShoppingItemModal';
 import AddCarModal from './AddCarModal';
+import AssignCarModal from './AssignCarModal';
+import UpdateCarModal from './UpdateCarModal';
 import Notification from './Notification';
 import MobileNavigation from './MobileNavigation';
 import './EventDashboard.css';
@@ -25,6 +27,9 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   const [isAddMealModalOpen, setIsAddMealModalOpen] = useState(false);
   const [isAddShoppingModalOpen, setIsAddShoppingModalOpen] = useState(false);
   const [isAddCarModalOpen, setIsAddCarModalOpen] = useState(false);
+  const [isAssignCarModalOpen, setIsAssignCarModalOpen] = useState(false);
+  const [isUpdateCarModalOpen, setIsUpdateCarModalOpen] = useState(false);
+  const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<Car | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentMobileView, setCurrentMobileView] = useState<'info' | 'meals' | 'shopping' | 'transport' | 'costs'>('info');
   const [notification, setNotification] = useState<{
@@ -96,13 +101,13 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
     });
   };
 
-  const totalShopping = event.shopping_items.reduce(
+  const totalShopping = (event.shopping_items || []).reduce(
     (sum, item) => sum + item.price * item.quantity, 
     0
   );
-  const totalFuel = event.cars.reduce((sum, car) => sum + car.fuel_cost, 0);
-  const costPerPerson = event.participants.length > 0 
-    ? (totalShopping + totalFuel) / event.participants.length 
+  const totalTransport = (event.cars || []).reduce((sum, car) => sum + car.fuel_cost + (car.rental_cost || 0), 0);
+  const costPerPerson = (event.participants || []).length > 0 
+    ? (totalShopping + totalTransport) / (event.participants || []).length 
     : 0;
 
   const handleAddMeal = async (mealData: MealCreate) => {
@@ -154,6 +159,81 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleAssignToCar = async (participantId: number, carId: number) => {
+    setIsLoading(true);
+    try {
+      await apiService.assignCarToParticipant(participantId, carId);
+      onEventUpdate();
+      setNotification({
+        message: 'Participant assigné à la voiture avec succès',
+        type: 'success',
+        isVisible: true
+      });
+    } catch (error) {
+      console.error('Error assigning participant to car:', error);
+      setNotification({
+        message: 'Erreur lors de l\'assignation à la voiture',
+        type: 'error',
+        isVisible: true
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemoveFromCar = async (participantId: number) => {
+    setIsLoading(true);
+    try {
+      // Assigner à null pour retirer de la voiture
+      await apiService.assignCarToParticipant(participantId, 0); // 0 pour retirer
+      onEventUpdate();
+      setNotification({
+        message: 'Participant retiré de la voiture',
+        type: 'info',
+        isVisible: true
+      });
+    } catch (error) {
+      console.error('Error removing participant from car:', error);
+      setNotification({
+        message: 'Erreur lors du retrait de la voiture',
+        type: 'error',
+        isVisible: true
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateCar = async (carId: number, carUpdate: CarUpdate) => {
+    setIsLoading(true);
+    try {
+      await apiService.updateCar(carId, carUpdate);
+      onEventUpdate();
+      setNotification({
+        message: 'Voiture mise à jour avec succès',
+        type: 'success',
+        isVisible: true
+      });
+      setIsUpdateCarModalOpen(false);
+      setSelectedCarForUpdate(null);
+    } catch (error) {
+      console.error('Error updating car:', error);
+      setNotification({
+        message: 'Erreur lors de la mise à jour de la voiture',
+        type: 'error',
+        isVisible: true
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOpenUpdateCarModal = (car: Car) => {
+    setSelectedCarForUpdate(car);
+    setIsUpdateCarModalOpen(true);
   };
 
   return (
@@ -216,11 +296,11 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
         {renderSection('info', (
           <section className="dashboard-section">
             <h2 className="section-title">
-              👥 Participants ({event.participants.length})
+              👥 Participants ({(event.participants || []).length})
             </h2>
             <div className="participants-grid">
-              {event.participants.map((p) => {
-                const car = event.cars.find(c => c.id === p.car_id);
+              {(event.participants || []).map((p) => {
+                const car = (event.cars || []).find(c => c.id === p.car_id);
                 return (
                   <div key={p.id} className="participant-card">
                     <span className="participant-name">{p.name}</span>
@@ -248,8 +328,8 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
               </button>
             </div>
             <div className="meals-list">
-              {event.meals.length > 0 ? (
-                event.meals.map((meal) => (
+              {(event.meals || []).length > 0 ? (
+                (event.meals || []).map((meal) => (
                   <div key={meal.id} className="meal-card">
                     <div className="meal-header">
                       <span className="meal-type">
@@ -286,8 +366,8 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
               </button>
             </div>
             <div className="shopping-list">
-              {event.shopping_items.length > 0 ? (
-                event.shopping_items.map((item) => (
+              {(event.shopping_items || []).length > 0 ? (
+                (event.shopping_items || []).map((item) => (
                   <div 
                     key={item.id} 
                     className={`shopping-item ${item.is_bought ? 'bought' : ''}`}
@@ -325,30 +405,66 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
           <section className="dashboard-section">
             <div className="section-header">
               <h2 className="section-title">🚗 Organisation du transport</h2>
-              <button 
-                className="add-button"
-                onClick={() => setIsAddCarModalOpen(true)}
-                disabled={isLoading}
-              >
-                ➕ Ajouter une voiture
-              </button>
+              <div className="section-actions">
+                <button 
+                  className="add-button"
+                  onClick={() => setIsAddCarModalOpen(true)}
+                  disabled={isLoading}
+                >
+                  ➕ Ajouter une voiture
+                </button>
+                {(event.cars || []).length > 0 && (
+                  <button 
+                    className="add-button secondary"
+                    onClick={() => setIsAssignCarModalOpen(true)}
+                    disabled={isLoading}
+                  >
+                    👥 Gérer les passagers
+                  </button>
+                )}
+              </div>
             </div>
             <div className="cars-list">
-              {event.cars.length > 0 ? (
-                event.cars.map((car) => {
-                  const passengers = event.participants.filter(p => p.car_id === car.id);
+              {(event.cars || []).length > 0 ? (
+                (event.cars || []).map((car) => {
+                  const passengers = (event.participants || []).filter(p => p.car_id === car.id);
                   return (
                     <div key={car.id} className="car-card">
                       <div className="car-header">
-                        <h3 className="car-title">
-                          🚗 {car.license_plate} - {car.driver_name}
-                        </h3>
-                        <span className="car-capacity">
-                          {passengers.length}/{car.max_passengers} places
-                        </span>
+                        <div className="car-title-section">
+                          <h3 className="car-title">
+                            🚗 {car.license_plate} - {car.driver_name}
+                          </h3>
+                          <span className="car-capacity">
+                            {passengers.length}/{car.max_passengers} places
+                          </span>
+                        </div>
+                        <button 
+                          className="update-car-button"
+                          onClick={() => handleOpenUpdateCarModal(car)}
+                          disabled={isLoading}
+                          title="Mettre à jour la voiture"
+                        >
+                          🔧
+                        </button>
                       </div>
                       <div className="car-details">
-                        <span className="fuel-cost">⛽ {car.fuel_cost.toFixed(2)}€</span>
+                        <div className="car-costs">
+                          <span className="fuel-cost">
+                            ⛽ Essence: {car.fuel_cost.toFixed(2)}€
+                            {car.actual_fuel_cost !== null && car.actual_fuel_cost !== undefined && (
+                              <span className="actual-cost"> → Réel: {car.actual_fuel_cost.toFixed(2)}€</span>
+                            )}
+                          </span>
+                          {car.rental_cost && car.rental_cost > 0 && (
+                            <span className="rental-cost">🏠 Location: {car.rental_cost.toFixed(2)}€</span>
+                          )}
+                          {(car.fuel_cost > 0 || (car.rental_cost && car.rental_cost > 0)) && passengers.length > 0 && (
+                            <span className="cost-per-person">
+                              💰 Par personne: {(((car.actual_fuel_cost ?? car.fuel_cost) + (car.rental_cost || 0)) / (passengers.length + 1)).toFixed(2)}€
+                            </span>
+                          )}
+                        </div>
                         {passengers.length > 0 && (
                           <div className="passengers">
                             <span className="passengers-label">Passagers:</span>
@@ -356,6 +472,11 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                               {passengers.map(p => p.name).join(', ')}
                             </span>
                           </div>
+                        )}
+                        {passengers.length === 0 && (
+                          <p className="no-passengers-hint">
+                            👥 Aucun passager - Utilisez "Gérer les passagers" pour en ajouter
+                          </p>
                         )}
                       </div>
                     </div>
@@ -379,9 +500,9 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                 <span className="cost-value">{totalShopping.toFixed(2)}€</span>
               </div>
               <div className="cost-item">
-                <span className="cost-icon">⛽</span>
-                <span className="cost-label">Essence</span>
-                <span className="cost-value">{totalFuel.toFixed(2)}€</span>
+                <span className="cost-icon">🚗</span>
+                <span className="cost-label">Transport</span>
+                <span className="cost-value">{totalTransport.toFixed(2)}€</span>
               </div>
               <div className="cost-item total">
                 <span className="cost-icon">💳</span>
@@ -413,6 +534,27 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
         onClose={() => setIsAddCarModalOpen(false)}
         onAddCar={handleAddCar}
         eventId={event.id}
+        participants={event.participants || []}
+      />
+
+      <AssignCarModal
+        isOpen={isAssignCarModalOpen}
+        onClose={() => setIsAssignCarModalOpen(false)}
+        cars={event.cars || []}
+        participants={event.participants || []}
+        onAssignToCar={handleAssignToCar}
+        onRemoveFromCar={handleRemoveFromCar}
+      />
+
+      <UpdateCarModal
+        isOpen={isUpdateCarModalOpen}
+        onClose={() => {
+          setIsUpdateCarModalOpen(false);
+          setSelectedCarForUpdate(null);
+        }}
+        onUpdateCar={handleUpdateCar}
+        car={selectedCarForUpdate}
+        participants={event.participants || []}
       />
 
       {/* Notification */}

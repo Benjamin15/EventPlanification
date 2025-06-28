@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CarCreate } from '../types';
+import { CarCreate, Participant } from '../types';
 import './AddCarModal.css';
 
 interface AddCarModalProps {
@@ -7,6 +7,7 @@ interface AddCarModalProps {
   onClose: () => void;
   onAddCar: (car: CarCreate) => Promise<void>;
   eventId: number;
+  participants: Participant[];
 }
 
 const AddCarModal: React.FC<AddCarModalProps> = ({
@@ -14,6 +15,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
   onClose,
   onAddCar,
   eventId,
+  participants,
 }) => {
   const [formData, setFormData] = useState<CarCreate>({
     event_id: eventId,
@@ -21,18 +23,31 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
     license_plate: '',
     max_passengers: 4,
     fuel_cost: 0,
+    rental_cost: 0,
+    driver_id: undefined,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'number' ? parseFloat(value) || 0 : value,
-    }));
+    
+    if (name === 'driver_id') {
+      const driverId = value ? parseInt(value) : undefined;
+      const selectedDriver = participants.find(p => p.id === driverId);
+      setFormData(prev => ({
+        ...prev,
+        driver_id: driverId,
+        driver_name: selectedDriver ? selectedDriver.name : prev.driver_name,
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'number' ? parseFloat(value) || 0 : value,
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,6 +68,8 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
         license_plate: '',
         max_passengers: 4,
         fuel_cost: 0,
+        rental_cost: 0,
+        driver_id: undefined,
       });
       onClose();
     } catch (err) {
@@ -81,17 +98,44 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
 
         <form onSubmit={handleSubmit} className="add-car-form">
           <div className="form-group">
-            <label htmlFor="driver_name">Nom du conducteur *</label>
-            <input
-              type="text"
-              id="driver_name"
-              name="driver_name"
-              value={formData.driver_name}
+            <label htmlFor="driver_id">
+              Conducteur *
+              <span className="hint">Sélectionnez parmi les participants inscrits</span>
+            </label>
+            <select
+              id="driver_id"
+              name="driver_id"
+              value={formData.driver_id || ''}
               onChange={handleInputChange}
               required
               disabled={isLoading}
-              placeholder="Votre nom"
-            />
+            >
+              <option value="">-- Sélectionner un conducteur --</option>
+              {participants.map(participant => (
+                <option key={participant.id} value={participant.id}>
+                  {participant.name}
+                </option>
+              ))}
+            </select>
+            {participants.length === 0 && (
+              <small className="no-participants-hint">
+                Aucun participant inscrit. Le conducteur pourra être assigné plus tard.
+              </small>
+            )}
+            {!formData.driver_id && (
+              <div className="manual-driver">
+                <label htmlFor="driver_name">Ou saisissez le nom manuellement :</label>
+                <input
+                  type="text"
+                  id="driver_name"
+                  name="driver_name"
+                  value={formData.driver_name}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                  placeholder="Nom du conducteur"
+                />
+              </div>
+            )}
           </div>
 
           <div className="form-group">
@@ -138,6 +182,22 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
                 disabled={isLoading}
                 placeholder="0.00"
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="rental_cost">Coût de location (€) <span className="optional">(optionnel)</span></label>
+              <input
+                type="number"
+                id="rental_cost"
+                name="rental_cost"
+                value={formData.rental_cost || ''}
+                onChange={handleInputChange}
+                min="0"
+                step="0.01"
+                disabled={isLoading}
+                placeholder="0.00"
+              />
+              <small className="field-hint">Coût de location de la voiture pour le voyage (si applicable)</small>
             </div>
           </div>
 

@@ -10,7 +10,8 @@ import {
   ParticipantCreate,
   MealCreate,
   ShoppingItemCreate,
-  CarCreate
+  CarCreate,
+  CarUpdate
 } from '../types';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -21,6 +22,9 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Export de l'instance axios pour les utilisations avancées
+export { api };
 
 export const apiService = {
   // Événements
@@ -36,6 +40,11 @@ export const apiService = {
 
   async listEvents(): Promise<Event[]> {
     const response = await api.get('/events/');
+    return response.data;
+  },
+
+  async checkEventNameAvailability(eventName: string): Promise<{available: boolean, message: string}> {
+    const response = await api.get(`/events/check-name/${encodeURIComponent(eventName)}`);
     return response.data;
   },
 
@@ -83,6 +92,16 @@ export const apiService = {
 
   async getEventCars(eventId: number): Promise<Car[]> {
     const response = await api.get(`/events/${eventId}/cars`);
+    return response.data;
+  },
+
+  async updateCar(carId: number, carUpdate: CarUpdate): Promise<Car> {
+    const response = await api.put(`/cars/${carId}`, carUpdate);
+    return response.data;
+  },
+
+  async getEventParticipants(eventId: number): Promise<Participant[]> {
+    const response = await api.get(`/events/${eventId}/participants`);
     return response.data;
   },
 

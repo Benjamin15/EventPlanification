@@ -49,6 +49,9 @@ export interface Car {
   license_plate: string;
   max_passengers: number;
   fuel_cost: number;
+  rental_cost?: number;
+  actual_fuel_cost?: number;
+  driver_id?: number;
   passengers: Participant[];
 }
 
@@ -63,6 +66,8 @@ export interface EventPhoto {
 export interface CostSummary {
   total_shopping: number;
   total_fuel: number;
+  total_rental: number;
+  total_transport: number;
   total_cost: number;
   participant_count: number;
   cost_per_person: number;
@@ -104,4 +109,12 @@ export interface CarCreate {
   license_plate: string;
   max_passengers: number;
   fuel_cost: number;
+  rental_cost?: number;
+  actual_fuel_cost?: number;
+  driver_id?: number;
+}
+
+export interface CarUpdate {
+  actual_fuel_cost?: number;
+  driver_id?: number;
 }

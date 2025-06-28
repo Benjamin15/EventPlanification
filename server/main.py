@@ -59,15 +59,46 @@ def validate_image_file(file: UploadFile) -> bool:
 # Routes pour les événements
 @app.post("/events/", response_model=schemas.Event)
 def create_event(event: schemas.EventCreate, db: Session = Depends(get_db)):
-    db_event = Event(**event.dict())
-    db.add(db_event)
-    db.commit()
-    db.refresh(db_event)
-    return db_event
+    # Vérifier si un événement avec ce nom existe déjà
+    existing_event = db.query(Event).filter(Event.name == event.name).first()
+    if existing_event:
+        raise HTTPException(
+            status_code=409, 
+            detail=f"Un événement avec le nom '{event.name}' existe déjà. Veuillez choisir un autre nom."
+        )
+    
+    try:
+        db_event = Event(**event.model_dump())
+        db.add(db_event)
+        db.commit()
+        db.refresh(db_event)
+        return db_event
+    except Exception as e:
+        db.rollback()
+        if "UNIQUE constraint failed: events.name" in str(e):
+            raise HTTPException(
+                status_code=409, 
+                detail=f"Un événement avec le nom '{event.name}' existe déjà. Veuillez choisir un autre nom."
+            )
+        raise HTTPException(status_code=500, detail="Erreur lors de la création de l'événement")
 
-@app.get("/events/{event_name}", response_model=schemas.EventFull)
-def get_event(event_name: str, db: Session = Depends(get_db)):
-    event = db.query(Event).filter(Event.name == event_name).first()
+@app.get("/events/check-name/{event_name}")
+def check_event_name_availability(event_name: str, db: Session = Depends(get_db)):
+    existing_event = db.query(Event).filter(Event.name == event_name).first()
+    return {
+        "available": existing_event is None,
+        "message": "Nom disponible" if existing_event is None else "Ce nom est déjà utilisé"
+    }
+
+@app.get("/events/{event_identifier}", response_model=schemas.EventFull)
+def get_event(event_identifier: str, db: Session = Depends(get_db)):
+    # Essayer d'abord par ID si c'est un nombre
+    if event_identifier.isdigit():
+        event = db.query(Event).filter(Event.id == int(event_identifier)).first()
+    else:
+        # Sinon chercher par nom
+        event = db.query(Event).filter(Event.name == event_identifier).first()
+    
     if event is None:
         raise HTTPException(status_code=404, detail="Événement non trouvé")
     return event
@@ -84,14 +115,17 @@ def join_event(participant: schemas.ParticipantCreate, db: Session = Depends(get
     if not event:
         raise HTTPException(status_code=404, detail="Événement non trouvé")
     
-    # Vérifier que le participant n'existe pas déjà
+    # Vérifier si le participant existe déjà
     existing = db.query(Participant).filter(
         Participant.event_id == participant.event_id,
         Participant.name == participant.name
     ).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Participant déjà inscrit à cet événement")
     
+    if existing:
+        # Si le participant existe déjà, le retourner (permettre la reconnexion)
+        return existing
+    
+    # Sinon, créer un nouveau participant
     db_participant = Participant(**participant.dict())
     db.add(db_participant)
     db.commit()
@@ -101,10 +135,20 @@ def join_event(participant: schemas.ParticipantCreate, db: Session = Depends(get
 @app.put("/participants/{participant_id}/car/{car_id}")
 def assign_car(participant_id: int, car_id: int, db: Session = Depends(get_db)):
     participant = db.query(Participant).filter(Participant.id == participant_id).first()
-    car = db.query(Car).filter(Car.id == car_id).first()
     
-    if not participant or not car:
-        raise HTTPException(status_code=404, detail="Participant ou voiture non trouvé")
+    if not participant:
+        raise HTTPException(status_code=404, detail="Participant non trouvé")
+    
+    # Si car_id est 0, retirer le participant de sa voiture actuelle
+    if car_id == 0:
+        participant.car_id = None
+        db.commit()
+        return {"message": "Participant retiré de la voiture"}
+    
+    # Sinon, assigner à une voiture
+    car = db.query(Car).filter(Car.id == car_id).first()
+    if not car:
+        raise HTTPException(status_code=404, detail="Voiture non trouvée")
     
     # Vérifier que la voiture n'est pas pleine
     current_passengers = db.query(Participant).filter(Participant.car_id == car_id).count()
@@ -165,6 +209,40 @@ def create_car(car: schemas.CarCreate, db: Session = Depends(get_db)):
 def get_event_cars(event_id: int, db: Session = Depends(get_db)):
     return db.query(Car).filter(Car.event_id == event_id).all()
 
+@app.put("/cars/{car_id}")
+def update_car(car_id: int, car_update: schemas.CarUpdate, db: Session = Depends(get_db)):
+    """Mettre à jour les informations d'une voiture (coût d'essence réel, conducteur)"""
+    car = db.query(Car).filter(Car.id == car_id).first()
+    
+    if not car:
+        raise HTTPException(status_code=404, detail="Voiture non trouvée")
+    
+    # Mise à jour des champs fournis
+    if car_update.actual_fuel_cost is not None:
+        car.actual_fuel_cost = car_update.actual_fuel_cost
+    
+    if car_update.driver_id is not None:
+        # Vérifier que le conducteur existe et appartient au même événement
+        driver = db.query(Participant).filter(
+            Participant.id == car_update.driver_id,
+            Participant.event_id == car.event_id
+        ).first()
+        
+        if not driver:
+            raise HTTPException(status_code=404, detail="Conducteur non trouvé dans cet événement")
+        
+        car.driver_id = car_update.driver_id
+        car.driver_name = driver.name  # Mettre à jour le nom aussi pour cohérence
+    
+    db.commit()
+    db.refresh(car)
+    return car
+
+@app.get("/events/{event_id}/participants", response_model=List[schemas.Participant])
+def get_event_participants(event_id: int, db: Session = Depends(get_db)):
+    """Récupérer tous les participants d'un événement"""
+    return db.query(Participant).filter(Participant.event_id == event_id).all()
+
 # Calcul des prix
 @app.get("/events/{event_id}/costs")
 def calculate_costs(event_id: int, db: Session = Depends(get_db)):
@@ -172,9 +250,12 @@ def calculate_costs(event_id: int, db: Session = Depends(get_db)):
     shopping_cost = db.query(ShoppingItem).filter(ShoppingItem.event_id == event_id).all()
     total_shopping = sum(item.price * item.quantity for item in shopping_cost)
     
-    # Coûts des voitures
+    # Coûts des voitures (carburant + location)
     cars = db.query(Car).filter(Car.event_id == event_id).all()
-    total_fuel = sum(car.fuel_cost for car in cars)
+    # Utiliser le coût réel d'essence si disponible, sinon le coût estimé
+    total_fuel = sum((car.actual_fuel_cost if car.actual_fuel_cost is not None else car.fuel_cost) for car in cars)
+    total_rental = sum((car.rental_cost or 0) for car in cars)
+    total_transport = total_fuel + total_rental
     
     # Nombre de participants
     participant_count = db.query(Participant).filter(Participant.event_id == event_id).count()
@@ -182,12 +263,14 @@ def calculate_costs(event_id: int, db: Session = Depends(get_db)):
     if participant_count == 0:
         return {"error": "Aucun participant"}
     
-    cost_per_person = (total_shopping + total_fuel) / participant_count
+    cost_per_person = (total_shopping + total_transport) / participant_count
     
     return {
         "total_shopping": total_shopping,
         "total_fuel": total_fuel,
-        "total_cost": total_shopping + total_fuel,
+        "total_rental": total_rental,
+        "total_transport": total_transport,
+        "total_cost": total_shopping + total_transport,
         "participant_count": participant_count,
         "cost_per_person": round(cost_per_person, 2)
     }
