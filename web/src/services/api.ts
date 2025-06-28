@@ -2,12 +2,16 @@ import axios from 'axios';
 import { 
   Event, 
   Participant, 
+  Activity,
+  ActivityAssignment,
   Meal, 
   ShoppingItem, 
   Car, 
   CostSummary,
   EventCreate,
   ParticipantCreate,
+  ActivityCreate,
+  ActivityAssignmentCreate,
   MealCreate,
   ShoppingItemCreate,
   CarCreate,
@@ -58,7 +62,37 @@ export const apiService = {
     await api.put(`/participants/${participantId}/car/${carId}`);
   },
 
-  // Repas
+  // Activités (remplace les repas)
+  async createActivity(activityData: ActivityCreate): Promise<Activity> {
+    const response = await api.post('/activities/', activityData);
+    return response.data;
+  },
+
+  async getEventActivities(eventId: number): Promise<Activity[]> {
+    const response = await api.get(`/events/${eventId}/activities`);
+    return response.data;
+  },
+
+  async updateActivity(activityId: number, activityData: Partial<Activity>): Promise<void> {
+    await api.put(`/activities/${activityId}`, activityData);
+  },
+
+  async deleteActivity(activityId: number): Promise<void> {
+    await api.delete(`/activities/${activityId}`);
+  },
+
+  // Assignations d'activités
+  async createActivityAssignment(assignmentData: ActivityAssignmentCreate): Promise<ActivityAssignment> {
+    const response = await api.post('/activity-assignments/', assignmentData);
+    return response.data;
+  },
+
+  async getActivityAssignments(activityId: number): Promise<ActivityAssignment[]> {
+    const response = await api.get(`/activities/${activityId}/assignments`);
+    return response.data;
+  },
+
+  // Anciens endpoints pour les repas (compatibilité)
   async createMeal(mealData: MealCreate): Promise<Meal> {
     const response = await api.post('/meals/', mealData);
     return response.data;
@@ -155,11 +189,14 @@ export const mockApiService = {
         { id: 3, name: "Charlie", event_id: 1, joined_at: "2025-06-22T09:15:00Z" },
         { id: 4, name: "Diana", event_id: 1, car_id: 2, joined_at: "2025-06-23T16:45:00Z" }
       ],
-      meals: [
-        { id: 1, event_id: 1, meal_type: "dinner", date: "2025-07-04T20:00:00Z", description: "Raclette traditionnelle" },
-        { id: 2, event_id: 1, meal_type: "breakfast", date: "2025-07-05T08:00:00Z", description: "Croissants et café" },
-        { id: 3, event_id: 1, meal_type: "lunch", date: "2025-07-05T12:30:00Z", description: "Tartiflette" },
-        { id: 4, event_id: 1, meal_type: "dinner", date: "2025-07-05T20:00:00Z", description: "Fondue savoyarde" }
+      activities: [
+        { id: 1, event_id: 1, name: "Raclette traditionnelle", activity_type: "meal", date: "2025-07-04T20:00:00Z", description: "Dîner d'arrivée avec raclette" },
+        { id: 2, event_id: 1, name: "Croissants et café", activity_type: "meal", date: "2025-07-05T08:00:00Z", description: "Petit-déjeuner continental" },
+        { id: 3, event_id: 1, name: "Randonnée matinale", activity_type: "sport", date: "2025-07-05T09:30:00Z", description: "Randonnée dans les sentiers de montagne", location: "Sentier des Crêtes" },
+        { id: 4, event_id: 1, name: "Tartiflette", activity_type: "meal", date: "2025-07-05T12:30:00Z", description: "Déjeuner savoyard" },
+        { id: 5, event_id: 1, name: "Session kayak", activity_type: "sport", date: "2025-07-05T15:00:00Z", description: "Kayak sur le lac", location: "Lac de montagne" },
+        { id: 6, event_id: 1, name: "Fondue savoyarde", activity_type: "meal", date: "2025-07-05T20:00:00Z", description: "Dîner traditionnel" },
+        { id: 7, event_id: 1, name: "Soirée jeux", activity_type: "leisure", date: "2025-07-05T21:30:00Z", description: "Soirée jeux de société au chalet", location: "Salon du chalet" }
       ],
       shopping_items: [
         { id: 1, event_id: 1, name: "Fromage à raclette", category: "food", price: 25.50, quantity: 2, is_bought: false },

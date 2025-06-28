@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './MobileNavigation.css';
 
 interface MobileNavigationProps {
-  currentView: 'info' | 'meals' | 'shopping' | 'transport' | 'costs';
-  onViewChange: (view: 'info' | 'meals' | 'shopping' | 'transport' | 'costs') => void;
+  currentView: 'info' | 'activities' | 'shopping' | 'transport' | 'costs';
+  onViewChange: (view: 'info' | 'activities' | 'shopping' | 'transport' | 'costs') => void;
   eventName: string;
 }
 
@@ -16,7 +16,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
   const navigationItems = [
     { id: 'info', label: 'Infos', icon: '📍' },
-    { id: 'meals', label: 'Repas', icon: '🍽️' },
+    { id: 'activities', label: 'Activités', icon: '🎯' },
     { id: 'shopping', label: 'Courses', icon: '🛒' },
     { id: 'transport', label: 'Transport', icon: '🚗' },
     { id: 'costs', label: 'Coûts', icon: '💰' }

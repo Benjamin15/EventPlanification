@@ -23,7 +23,7 @@ class Event(Base):
     
     # Relations
     participants = relationship("Participant", back_populates="event")
-    meals = relationship("Meal", back_populates="event")
+    activities = relationship("Activity", back_populates="event")
     shopping_items = relationship("ShoppingItem", back_populates="event")
     cars = relationship("Car", back_populates="event")
     photos = relationship("EventPhoto", back_populates="event")
@@ -40,8 +40,37 @@ class Participant(Base):
     # Relations
     event = relationship("Event", back_populates="participants")
     car = relationship("Car", back_populates="passengers", foreign_keys=[car_id])
-    meal_assignments = relationship("MealAssignment", back_populates="participant")
+    activity_assignments = relationship("ActivityAssignment", back_populates="participant")
 
+class Activity(Base):
+    __tablename__ = "activities"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(Integer, ForeignKey("events.id"))
+    name = Column(String)
+    activity_type = Column(String)  # meal, sport, leisure, tourism, other
+    date = Column(DateTime, nullable=True)
+    description = Column(Text, nullable=True)
+    location = Column(String, nullable=True)
+    max_participants = Column(Integer, nullable=True)
+    
+    # Relations
+    event = relationship("Event", back_populates="activities")
+    assignments = relationship("ActivityAssignment", back_populates="activity")
+
+class ActivityAssignment(Base):
+    __tablename__ = "activity_assignments"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    activity_id = Column(Integer, ForeignKey("activities.id"))
+    participant_id = Column(Integer, ForeignKey("participants.id"))
+    role = Column(String, nullable=True)  # cook, helper, responsible, participant, leader
+    
+    # Relations
+    activity = relationship("Activity", back_populates="assignments")
+    participant = relationship("Participant", back_populates="activity_assignments")
+
+# Anciens modèles - Conservés pour la migration
 class Meal(Base):
     __tablename__ = "meals"
     
@@ -51,9 +80,8 @@ class Meal(Base):
     date = Column(DateTime)
     description = Column(Text)
     
-    # Relations
-    event = relationship("Event", back_populates="meals")
-    assignments = relationship("MealAssignment", back_populates="meal")
+    # Relations (temporaires pour la migration)
+    event = relationship("Event")
 
 class MealAssignment(Base):
     __tablename__ = "meal_assignments"
@@ -63,9 +91,9 @@ class MealAssignment(Base):
     participant_id = Column(Integer, ForeignKey("participants.id"))
     role = Column(String)  # cook, helper, responsible
     
-    # Relations
-    meal = relationship("Meal", back_populates="assignments")
-    participant = relationship("Participant", back_populates="meal_assignments")
+    # Relations (temporaires pour la migration)
+    meal = relationship("Meal")
+    participant = relationship("Participant")
 
 class ShoppingItem(Base):
     __tablename__ = "shopping_items"

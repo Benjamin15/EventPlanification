@@ -37,7 +37,42 @@ class Participant(ParticipantBase):
     class Config:
         from_attributes = True
 
-# Schémas pour les repas
+# Schémas pour les activités (remplace les repas)
+class ActivityBase(BaseModel):
+    name: str
+    activity_type: str  # meal, sport, leisure, tourism, other
+    date: Optional[datetime] = None
+    description: Optional[str] = None
+    location: Optional[str] = None
+    max_participants: Optional[int] = None
+
+class ActivityCreate(ActivityBase):
+    event_id: int
+
+class Activity(ActivityBase):
+    id: int
+    event_id: int
+    
+    class Config:
+        from_attributes = True
+
+# Schémas pour les assignations d'activités
+class ActivityAssignmentBase(BaseModel):
+    role: Optional[str] = None
+
+class ActivityAssignmentCreate(ActivityAssignmentBase):
+    activity_id: int
+    participant_id: int
+
+class ActivityAssignment(ActivityAssignmentBase):
+    id: int
+    activity_id: int
+    participant_id: int
+    
+    class Config:
+        from_attributes = True
+
+# Anciens schémas pour les repas (conservés pour la migration)
 class MealBase(BaseModel):
     meal_type: str
     date: datetime

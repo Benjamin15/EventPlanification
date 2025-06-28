@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { Event, Participant, CostSummary, MealCreate, ShoppingItemCreate, CarCreate, CarUpdate, Car } from '../types';
+import { Event, Participant, CostSummary, ActivityCreate, ShoppingItemCreate, CarCreate, CarUpdate, Car } from '../types';
 import { apiService } from '../services/api';
 import { realtimeService, EventUpdate } from '../services/realtime';
-import AddMealModal from './AddMealModal';
+import AddActivityModal from './AddActivityModal';
 import AddShoppingItemModal from './AddShoppingItemModal';
 import AddCarModal from './AddCarModal';
 import AssignCarModal from './AssignCarModal';
@@ -24,14 +24,14 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   costs,
   onEventUpdate
 }) => {
-  const [isAddMealModalOpen, setIsAddMealModalOpen] = useState(false);
+  const [isAddActivityModalOpen, setIsAddActivityModalOpen] = useState(false);
   const [isAddShoppingModalOpen, setIsAddShoppingModalOpen] = useState(false);
   const [isAddCarModalOpen, setIsAddCarModalOpen] = useState(false);
   const [isAssignCarModalOpen, setIsAssignCarModalOpen] = useState(false);
   const [isUpdateCarModalOpen, setIsUpdateCarModalOpen] = useState(false);
   const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<Car | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentMobileView, setCurrentMobileView] = useState<'info' | 'meals' | 'shopping' | 'transport' | 'costs'>('info');
+  const [currentMobileView, setCurrentMobileView] = useState<'info' | 'activities' | 'shopping' | 'transport' | 'costs'>('info');
   const [notification, setNotification] = useState<{
     message: string;
     type: 'success' | 'error' | 'info';
@@ -110,13 +110,13 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
     ? (totalShopping + totalTransport) / (event.participants || []).length 
     : 0;
 
-  const handleAddMeal = async (mealData: MealCreate) => {
+  const handleAddActivity = async (activityData: ActivityCreate) => {
     setIsLoading(true);
     try {
-      await apiService.createMeal(mealData);
+      await apiService.createActivity(activityData);
       onEventUpdate();
     } catch (error) {
-      console.error('Error adding meal:', error);
+      console.error('Error adding activity:', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -329,39 +329,49 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
           </section>
         ))}
 
-        {/* Repas */}
-        {renderSection('meals', (
+        {/* Activités */}
+        {renderSection('activities', (
           <section className="dashboard-section">
             <div className="section-header">
-              <h2 className="section-title">🍽️ Planning des repas</h2>
+              <h2 className="section-title">🎯 Planning des activités</h2>
               <button 
                 className="add-button"
-                onClick={() => setIsAddMealModalOpen(true)}
+                onClick={() => setIsAddActivityModalOpen(true)}
                 disabled={isLoading}
               >
-                ➕ Ajouter un repas
+                ➕ Ajouter une activité
               </button>
             </div>
-            <div className="meals-list">
-              {(event.meals || []).length > 0 ? (
-                (event.meals || []).map((meal) => (
-                  <div key={meal.id} className="meal-card">
-                    <div className="meal-header">
-                      <span className="meal-type">
-                        {meal.meal_type === 'breakfast' && '🥐'}
-                        {meal.meal_type === 'lunch' && '🥙'}
-                        {meal.meal_type === 'dinner' && '🍽️'}
-                        {meal.meal_type.charAt(0).toUpperCase() + meal.meal_type.slice(1)}
+            <div className="activities-list">
+              {(event.activities || []).length > 0 ? (
+                (event.activities || []).map((activity) => (
+                  <div key={activity.id} className="activity-card">
+                    <div className="activity-header">
+                      <span className="activity-type">
+                        {activity.activity_type === 'meal' && '🍽️'}
+                        {activity.activity_type === 'sport' && '⛷️'}
+                        {activity.activity_type === 'leisure' && '🎮'}
+                        {activity.activity_type === 'tourism' && '🏔️'}
+                        {activity.activity_type === 'other' && '📝'}
+                        {activity.name}
                       </span>
-                      <span className="meal-date">{formatDateTime(meal.date)}</span>
+                      {activity.date && (
+                        <span className="activity-date">{formatDateTime(activity.date)}</span>
+                      )}
                     </div>
-                    {meal.description && (
-                      <p className="meal-description">{meal.description}</p>
+                    {activity.description && (
+                      <p className="activity-description">{activity.description}</p>
+                    )}
+                    {activity.location && (
+                      <p className="activity-location">📍 {activity.location}</p>
+                    )}
+                    {activity.max_participants && (
+                      <p className="activity-participants">👥 Max {activity.max_participants} participants</p>
                     )}
                   </div>
                 ))
               ) : (
-                <p className="empty-state">Aucun repas planifié pour le moment</p>
+                <p className="empty-state">Aucune activité planifiée pour le moment</p>
               )}
             </div>
           </section>
@@ -530,10 +540,10 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
       </main>
 
       {/* Modales */}
-      <AddMealModal
-        isOpen={isAddMealModalOpen}
-        onClose={() => setIsAddMealModalOpen(false)}
-        onAddMeal={handleAddMeal}
+      <AddActivityModal
+        isOpen={isAddActivityModalOpen}
+        onClose={() => setIsAddActivityModalOpen(false)}
+        onAddActivity={handleAddActivity}
         eventId={event.id}
       />
 

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import database
 import schemas
-from database import SessionLocal, Event, Participant, Meal, ShoppingItem, Car, EventPhoto
+from database import SessionLocal, Event, Participant, Meal, ShoppingItem, Car, EventPhoto, Activity, ActivityAssignment
 import os
 import uuid
 import shutil
@@ -159,7 +159,55 @@ def assign_car(participant_id: int, car_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Participant assigné à la voiture"}
 
-# Routes pour les repas
+# Routes pour les activités (remplace les repas)
+@app.post("/activities/", response_model=schemas.Activity)
+def create_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db)):
+    db_activity = Activity(**activity.dict())
+    db.add(db_activity)
+    db.commit()
+    db.refresh(db_activity)
+    return db_activity
+
+@app.get("/events/{event_id}/activities", response_model=List[schemas.Activity])
+def get_event_activities(event_id: int, db: Session = Depends(get_db)):
+    return db.query(Activity).filter(Activity.event_id == event_id).all()
+
+@app.put("/activities/{activity_id}")
+def update_activity(activity_id: int, activity_update: schemas.ActivityBase, db: Session = Depends(get_db)):
+    activity = db.query(Activity).filter(Activity.id == activity_id).first()
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activité non trouvée")
+    
+    for key, value in activity_update.dict(exclude_unset=True).items():
+        setattr(activity, key, value)
+    
+    db.commit()
+    return {"message": "Activité mise à jour"}
+
+@app.delete("/activities/{activity_id}")
+def delete_activity(activity_id: int, db: Session = Depends(get_db)):
+    activity = db.query(Activity).filter(Activity.id == activity_id).first()
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activité non trouvée")
+    
+    db.delete(activity)
+    db.commit()
+    return {"message": "Activité supprimée"}
+
+# Routes pour les assignations d'activités
+@app.post("/activity-assignments/", response_model=schemas.ActivityAssignment)
+def create_activity_assignment(assignment: schemas.ActivityAssignmentCreate, db: Session = Depends(get_db)):
+    db_assignment = ActivityAssignment(**assignment.dict())
+    db.add(db_assignment)
+    db.commit()
+    db.refresh(db_assignment)
+    return db_assignment
+
+@app.get("/activities/{activity_id}/assignments", response_model=List[schemas.ActivityAssignment])
+def get_activity_assignments(activity_id: int, db: Session = Depends(get_db)):
+    return db.query(ActivityAssignment).filter(ActivityAssignment.activity_id == activity_id).all()
+
+# Anciens routes pour les repas (conservés pour compatibilité pendant la migration)
 @app.post("/meals/", response_model=schemas.Meal)
 def create_meal(meal: schemas.MealCreate, db: Session = Depends(get_db)):
     db_meal = Meal(**meal.dict())

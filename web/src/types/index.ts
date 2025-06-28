@@ -9,7 +9,7 @@ export interface Event {
   end_date?: string;
   created_at: string;
   participants: Participant[];
-  meals: Meal[];
+  activities: Activity[];
   shopping_items: ShoppingItem[];
   cars: Car[];
   photos: EventPhoto[];
@@ -23,6 +23,25 @@ export interface Participant {
   joined_at: string;
 }
 
+export interface Activity {
+  id: number;
+  event_id: number;
+  name: string;
+  activity_type: 'meal' | 'sport' | 'leisure' | 'tourism' | 'other';
+  date?: string;
+  description?: string;
+  location?: string;
+  max_participants?: number;
+}
+
+export interface ActivityAssignment {
+  id: number;
+  activity_id: number;
+  participant_id: number;
+  role?: string;
+}
+
+// Ancien type Meal (conservé pour compatibilité)
 export interface Meal {
   id: number;
   event_id: number;
@@ -88,6 +107,40 @@ export interface ParticipantCreate {
   event_id: number;
 }
 
+export interface ActivityCreate {
+  event_id: number;
+  name: string;
+  activity_type: 'meal' | 'sport' | 'leisure' | 'tourism' | 'other';
+  date?: string;
+  description?: string;
+  location?: string;
+  max_participants?: number;
+}
+
+export interface ActivityAssignmentCreate {
+  activity_id: number;
+  participant_id: number;
+  role?: string;
+}
+
+// Ancien type pour la compatibilité
+export interface ActivityCreate {
+  event_id: number;
+  name: string;
+  activity_type: 'meal' | 'sport' | 'leisure' | 'tourism' | 'other';
+  date?: string;
+  description?: string;
+  location?: string;
+  max_participants?: number;
+}
+
+export interface ActivityAssignmentCreate {
+  activity_id: number;
+  participant_id: number;
+  role?: string;
+}
+
+// Ancien type MealCreate (conservé pour compatibilité)
 export interface MealCreate {
   event_id: number;
   meal_type: string;

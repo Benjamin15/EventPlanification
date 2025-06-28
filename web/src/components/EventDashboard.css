@@ -212,6 +212,92 @@
   font-weight: 500;
 }
 
+/* Styles pour les activités */
+.activities-list {
+  display: grid;
+  gap: 16px;
+}
+
+.activity-card {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #3498db;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.activity-type {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-date {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  background: #ecf0f1;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.activity-description {
+  margin: 8px 0;
+  color: #2c3e50;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.activity-location {
+  margin: 4px 0;
+  color: #27ae60;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.activity-participants {
+  margin: 4px 0;
+  color: #e67e22;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Types d'activités avec couleurs spécifiques */
+.activity-card[data-type="meal"] {
+  border-left-color: #e74c3c;
+}
+
+.activity-card[data-type="sport"] {
+  border-left-color: #2ecc71;
+}
+
+.activity-card[data-type="leisure"] {
+  border-left-color: #9b59b6;
+}
+
+.activity-card[data-type="tourism"] {
+  border-left-color: #f39c12;
+}
+
+.activity-card[data-type="other"] {
+  border-left-color: #95a5a6;
+}
+
+/* Anciens styles pour les repas (conservés pour compatibilité) */
 .meals-list {
   display: grid;
   gap: 16px;

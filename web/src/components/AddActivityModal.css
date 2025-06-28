@@ -1,0 +1,174 @@
+/* Styles pour le modal d'ajout d'activité */
+.add-activity-form {
+  padding: 24px 32px 32px;
+}
+
+.add-activity-form .form-group {
+  margin-bottom: 20px;
+}
+
+.add-activity-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.add-activity-form .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.add-activity-form .form-group input,
+.add-activity-form .form-group select,
+.add-activity-form .form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  background: white;
+}
+
+.add-activity-form .form-group input:focus,
+.add-activity-form .form-group select:focus,
+.add-activity-form .form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.add-activity-form .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Suggestions d'activités */
+.suggestions {
+  margin: 16px 0 24px 0;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.suggestions-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.suggestion-chip {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 0 8px 8px 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.suggestion-chip:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Actions du formulaire */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancel-button {
+  flex: 1;
+  padding: 14px 24px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.cancel-button:hover {
+  background: #e5e7eb;
+}
+
+.submit-button {
+  flex: 1;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Types d'activités avec couleurs */
+select[name="activity_type"] option {
+  padding: 8px;
+}
+
+/* Message d'erreur */
+.error-message {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+/* Style responsif */
+@media (max-width: 640px) {
+  .add-activity-form .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .suggestion-chip {
+    margin-right: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+}
