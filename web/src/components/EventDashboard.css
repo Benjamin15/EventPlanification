@@ -1,0 +1,442 @@
+.dashboard {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.event-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.welcome-text {
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  opacity: 0.9;
+}
+
+.event-dates {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: grid;
+  gap: 32px;
+}
+
+.dashboard-section {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Section headers with action buttons */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.section-header .section-title {
+  margin: 0;
+}
+
+.add-button {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.add-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.add-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Interactive shopping items */
+.item-checkbox {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.item-checkbox:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.item-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.info-item.description {
+  align-items: flex-start;
+}
+
+.info-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+}
+
+.info-text {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.info-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.info-link:hover {
+  text-decoration: underline;
+}
+
+.participants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.participant-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #3498db;
+}
+
+.participant-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.participant-transport {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.meals-list {
+  display: grid;
+  gap: 16px;
+}
+
+.meal-card {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #e74c3c;
+}
+
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.meal-type {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.meal-date {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.meal-description {
+  margin: 0;
+  color: #2c3e50;
+  font-style: italic;
+}
+
+.shopping-list {
+  display: grid;
+  gap: 12px;
+}
+
+.shopping-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.shopping-item.bought {
+  background-color: #d5f4e6;
+  opacity: 0.8;
+}
+
+.shopping-item.bought .item-name {
+  text-decoration: line-through;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.item-checkbox {
+  font-size: 1.1rem;
+}
+
+.item-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.item-category {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.item-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-price {
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.bought-by {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.cars-list {
+  display: grid;
+  gap: 20px;
+}
+
+.car-card {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #f39c12;
+}
+
+.car-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.car-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.car-capacity {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.car-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fuel-cost {
+  font-weight: 600;
+  color: #f39c12;
+}
+
+.passengers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.passengers-label {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.passengers-list {
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+
+.costs-section {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+}
+
+.costs-section .section-title {
+  color: white;
+}
+
+.costs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.cost-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.cost-item.total {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.cost-icon {
+  font-size: 1.5rem;
+}
+
+.cost-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  flex: 1;
+}
+
+.cost-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.cost-item.total .cost-value {
+  font-size: 1.4rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 40px 20px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 20px 16px;
+    gap: 24px;
+  }
+  
+  .dashboard-section {
+    padding: 24px 20px;
+  }
+  
+  .event-title {
+    font-size: 2rem;
+  }
+  
+  .participants-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .participant-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .meal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .shopping-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .car-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .costs-grid {
+    grid-template-columns: 1fr;
+  }
+}
