@@ -27,7 +27,10 @@ function App() {
       };
       const participant = await apiService.joinEvent(participantData);
       
-      setCurrentEvent(event);
+      // Rafraîchir l'événement pour inclure le nouveau participant
+      const updatedEvent = await apiService.getEvent(eventName);
+      
+      setCurrentEvent(updatedEvent);
       setCurrentParticipant(participant);
       setCurrentScreen('dashboard');
     } catch (err) {
@@ -53,7 +56,10 @@ function App() {
       };
       const participant = await apiService.joinEvent(participantData);
       
-      setCurrentEvent(event);
+      // Rafraîchir l'événement pour inclure le créateur
+      const updatedEvent = await apiService.getEvent(event.name);
+      
+      setCurrentEvent(updatedEvent);
       setCurrentParticipant(participant);
       setCurrentScreen('dashboard');
     } catch (err) {

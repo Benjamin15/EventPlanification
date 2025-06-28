@@ -300,12 +300,27 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
             </h2>
             <div className="participants-grid">
               {(event.participants || []).map((p) => {
-                const car = (event.cars || []).find(c => c.id === p.car_id);
+                // Trouver si le participant est conducteur d'une voiture
+                const drivenCar = (event.cars || []).find(c => c.driver_id === p.id);
+                // Trouver si le participant est passager d'une voiture
+                const passengerCar = (event.cars || []).find(c => c.id === p.car_id);
+                
                 return (
                   <div key={p.id} className="participant-card">
-                    <span className="participant-name">{p.name}</span>
+                    <div className="participant-info">
+                      <span className="participant-name">{p.name}</span>
+                      {drivenCar && (
+                        <span className="driver-badge">👨‍✈️ Conducteur</span>
+                      )}
+                    </div>
                     <span className="participant-transport">
-                      {car ? `🚗 ${car.license_plate}` : '🚶 Pas de voiture'}
+                      {drivenCar ? (
+                        `🚗 Conduit ${drivenCar.license_plate}`
+                      ) : passengerCar ? (
+                        `🚗 Passager ${passengerCar.license_plate}`
+                      ) : (
+                        '🚶 Pas de voiture'
+                      )}
                     </span>
                   </div>
                 );

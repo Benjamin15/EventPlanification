@@ -182,14 +182,34 @@
   border-left: 4px solid #3498db;
 }
 
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .participant-name {
   font-weight: 600;
   color: #2c3e50;
 }
 
+.driver-badge {
+  font-size: 0.75rem;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  width: fit-content;
+}
+
 .participant-transport {
   font-size: 0.9rem;
   color: #7f8c8d;
+  font-weight: 500;
 }
 
 .meals-list {

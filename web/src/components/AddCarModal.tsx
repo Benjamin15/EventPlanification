@@ -40,7 +40,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
       setFormData(prev => ({
         ...prev,
         driver_id: driverId,
-        driver_name: selectedDriver ? selectedDriver.name : prev.driver_name,
+        driver_name: selectedDriver ? selectedDriver.name : '',
       }));
     } else {
       setFormData(prev => ({
@@ -119,22 +119,8 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
             </select>
             {participants.length === 0 && (
               <small className="no-participants-hint">
-                Aucun participant inscrit. Le conducteur pourra être assigné plus tard.
+                Aucun participant inscrit. Rejoignez d'abord l'événement pour ajouter une voiture.
               </small>
-            )}
-            {!formData.driver_id && (
-              <div className="manual-driver">
-                <label htmlFor="driver_name">Ou saisissez le nom manuellement :</label>
-                <input
-                  type="text"
-                  id="driver_name"
-                  name="driver_name"
-                  value={formData.driver_name}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  placeholder="Nom du conducteur"
-                />
-              </div>
             )}
           </div>
 
@@ -219,7 +205,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
             <button
               type="submit"
               className="submit-button"
-              disabled={isLoading || !formData.driver_name.trim() || !formData.license_plate.trim()}
+              disabled={isLoading || !formData.driver_id || !formData.license_plate.trim()}
             >
               {isLoading ? 'Ajout...' : 'Ajouter la voiture'}
             </button>
