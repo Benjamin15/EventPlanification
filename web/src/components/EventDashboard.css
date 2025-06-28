@@ -981,3 +981,58 @@
     gap: 8px;
   }
 }
+
+/* Styles améliorés pour l'onglet Participants */
+.participants-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.participant-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.driver-badge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.transport-status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.transport-status.driver {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.transport-status.passenger {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.transport-status.none {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.car-details {
+  margin-top: 4px;
+}
+
+.car-info {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+}

@@ -83,7 +83,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
         return <EventInfoTab event={event} />;
       
       case 'participants':
-        return <ParticipantsTab participants={event.participants || []} cars={event.cars || []} />;
+        return <ParticipantsTab participants={event.participants || []} />;
       
       case 'activities':
         return (
