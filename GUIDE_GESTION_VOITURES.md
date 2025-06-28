@@ -84,8 +84,8 @@
 3. Vérifier la mise à jour du coût par personne
 
 ### Test 4: Calculs de Coûts
-1. Voiture à 60€ avec 3 passagers → 20€/personne
-2. Retirer 1 passager → 30€/personne
+1. Voiture à 60$ avec 3 passagers → 20$/personne
+2. Retirer 1 passager → 30$/personne
 3. Vérifier les totaux dans la section "Résumé des coûts"
 
 ## 🔧 DÉTAILS TECHNIQUES
@@ -118,15 +118,15 @@
    - Diana Petit (conductrice)
 
 2. **Voitures :**
-   - 🚗 AB-123-CD (Alice) - 4 places - 60€ essence
-   - 🚗 EF-456-GH (Diana) - 5 places - 45€ essence
+   - 🚗 AB-123-CD (Alice) - 4 places - 60$ essence
+   - 🚗 EF-456-GH (Diana) - 5 places - 45$ essence
 
 3. **Assignation optimale :**
-   - Voiture Alice : Alice + Bob (30€/personne)
-   - Voiture Diana : Diana + Charlie (22.50€/personne)
+   - Voiture Alice : Alice + Bob (30$/personne)
+   - Voiture Diana : Diana + Charlie (22.50$/personne)
 
 4. **Coûts totaux :**
-   - Essence : 105€ total
+   - Essence : 105$ total
    - Répartition équitable selon les voitures
 
 ## 🎯 AVANTAGES DE CETTE IMPLÉMENTATION

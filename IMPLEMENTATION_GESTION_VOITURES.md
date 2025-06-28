@@ -93,16 +93,16 @@ handleRemoveFromCar()   - Retirer participant de voiture
 #### 1. Section Transport
 ```
 🚗 AB-123-CD - Alice Martin    [3/4 places]
-⛽ Essence: 60.00€
-💰 Par personne: 20.00€
+⛽ Essence: 60.00$
+💰 Par personne: 20.00$
 👥 Passagers: Alice, Bob, Charlie
 ```
 
 #### 2. Résumé des Coûts
 ```
-🛒 Courses: 156.50€
-⛽ Essence: 105.00€  
-💳 Par personne: 43.58€
+🛒 Courses: 156.50$
+⛽ Essence: 105.00$  
+💳 Par personne: 43.58$
 ```
 
 ## 📱 EXPÉRIENCE UTILISATEUR
@@ -174,15 +174,15 @@ const totalFuel = cars.reduce((sum, car) => sum + car.fuel_cost, 0);
 **Participants :** Alice (conductrice), Bob, Charlie, Diana (conductrice), Emma, Frank
 
 **Voitures :**
-- 🚗 AB-123-CD (Alice) - 4 places - 85€
-- 🚗 EF-456-GH (Diana) - 5 places - 70€
-- 🚗 IJ-789-KL (Frank) - 3 places - 55€
+- 🚗 AB-123-CD (Alice) - 4 places - 85$
+- 🚗 EF-456-GH (Diana) - 5 places - 70$
+- 🚗 IJ-789-KL (Frank) - 3 places - 55$
 
 **Optimisation automatique :**
 ```
-Voiture Alice : Alice + Bob + Charlie (28.33€/personne)
-Voiture Diana : Diana + Emma (35€/personne)  
-Voiture Frank : Frank seul (55€/personne)
+Voiture Alice : Alice + Bob + Charlie (28.33$/personne)
+Voiture Diana : Diana + Emma (35$/personne)  
+Voiture Frank : Frank seul (55$/personne)
 ```
 
 **Résultat :** Répartition équitable et transparente des coûts de transport !

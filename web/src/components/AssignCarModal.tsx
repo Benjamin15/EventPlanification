@@ -108,9 +108,9 @@ const AssignCarModal: React.FC<AssignCarModalProps> = ({
                         <h4>🚗 {car.license_plate}</h4>
                         <p>Conducteur: {car.driver_name}</p>
                         <p>Places: {currentPassengers}/{car.max_passengers}</p>
-                        <p className="fuel-cost">⛽ {car.fuel_cost.toFixed(2)}€</p>
+                        <p className="fuel-cost">⛽ {car.fuel_cost.toFixed(2)}$</p>
                         {car.rental_cost && car.rental_cost > 0 && (
-                          <p className="rental-cost">🏠 {car.rental_cost.toFixed(2)}€</p>
+                          <p className="rental-cost">🏠 {car.rental_cost.toFixed(2)}$</p>
                         )}
                       </div>
                       <button
@@ -145,9 +145,9 @@ const AssignCarModal: React.FC<AssignCarModalProps> = ({
                         <span className="capacity">
                           {carPassengers.length}/{car.max_passengers} places
                         </span>
-                        <span className="fuel-cost">⛽ {car.fuel_cost.toFixed(2)}€</span>
+                        <span className="fuel-cost">⛽ {car.fuel_cost.toFixed(2)}$</span>
                         {car.rental_cost && car.rental_cost > 0 && (
-                          <span className="rental-cost">🏠 {car.rental_cost.toFixed(2)}€</span>
+                          <span className="rental-cost">🏠 {car.rental_cost.toFixed(2)}$</span>
                         )}
                       </div>
                       

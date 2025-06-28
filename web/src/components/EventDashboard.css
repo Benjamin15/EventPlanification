@@ -36,7 +36,7 @@
 .dashboard-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 16px 20px 80px; /* Padding bottom pour la navigation mobile */
   display: grid;
   gap: 32px;
 }
@@ -139,30 +139,37 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 0;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
-.info-item.description {
-  align-items: flex-start;
+.info-item.full-width {
+  grid-column: 1 / -1;
 }
 
 .info-icon {
-  font-size: 1.2rem;
-  min-width: 24px;
+  font-size: 1.25rem;
+  opacity: 0.8;
 }
 
 .info-text {
-  color: #2c3e50;
-  font-size: 1rem;
+  flex: 1;
+  color: #374151;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .info-link {
   color: #3498db;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .info-link:hover {
+  color: #2980b9;
   text-decoration: underline;
 }
 
@@ -177,9 +184,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background-color: #f8f9fa;
+  background: #f8fafc;
   border-radius: 12px;
-  border-left: 4px solid #3498db;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.participant-card:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
 }
 
 .participant-info {
@@ -190,26 +204,29 @@
 
 .participant-name {
   font-weight: 600;
-  color: #2c3e50;
+  color: #1e293b;
+  font-size: 1rem;
 }
 
-.driver-badge {
-  font-size: 0.75rem;
-  background: linear-gradient(135deg, #f39c12, #e67e22);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  width: fit-content;
+.participant-join-date {
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
-.participant-transport {
-  font-size: 0.9rem;
-  color: #7f8c8d;
+.participant-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.participant-car {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: 500;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 /* Styles pour les activités */
@@ -582,49 +599,385 @@
   font-size: 0.9rem;
 }
 
+/* ===========================================
+   SYSTÈME D'ONGLETS - STYLES SPÉCIFIQUES
+   =========================================== */
+
+/* Contenu des onglets */
+.tab-content {
+  width: 100%;
+}
+
+/* Styles responsive pour le dashboard avec onglets */
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px 80px; /* Padding bottom pour la navigation mobile */
+}
+
+/* Mobile first - single column layout */
 @media (max-width: 768px) {
   .dashboard-content {
+    padding: 12px 16px 80px;
+    gap: 20px;
+  }
+  
+  .dashboard-section {
     padding: 20px 16px;
+    border-radius: 12px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .section-actions {
+    justify-content: stretch;
+  }
+  
+  .add-button {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-content {
+    padding: 20px 24px 40px;
     gap: 24px;
   }
   
   .dashboard-section {
-    padding: 24px 20px;
+    padding: 24px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .dashboard-content {
+    padding: 32px 40px;
+    gap: 32px;
   }
   
-  .event-title {
-    font-size: 2rem;
+  .dashboard-section {
+    padding: 32px;
+  }
+}
+
+/* ===========================================
+   STYLES POUR LES COMPOSANTS D'ONGLETS
+   =========================================== */
+
+/* Shopping summary stats */
+.shopping-summary {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.shopping-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: space-around;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Transport summary */
+.transport-summary {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f0f9ff;
+  border-radius: 12px;
+  border: 1px solid #bae6fd;
+}
+
+.transport-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: space-around;
+}
+
+/* Participants sans voiture */
+.unassigned-participants {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fef3c7;
+  border-radius: 12px;
+  border: 1px solid #fbbf24;
+}
+
+.unassigned-title {
+  margin: 0 0 12px 0;
+  color: #92400e;
+  font-size: 1rem;
+}
+
+.unassigned-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.unassigned-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #fed7aa;
+  color: #9a3412;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Passenger tags in car cards */
+.passenger-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.passenger-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ===========================================
+   STYLES POUR LE COMPOSANT COSTS
+   =========================================== */
+
+/* Overview des coûts */
+.costs-overview {
+  margin-bottom: 32px;
+}
+
+.cost-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.cost-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.cost-card:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+}
+
+.cost-card.primary {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.cost-card.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+}
+
+.cost-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.cost-content {
+  flex: 1;
+}
+
+.cost-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.cost-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* Détails des coûts */
+.cost-breakdown {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.breakdown-title {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.breakdown-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.breakdown-item:last-child {
+  border-bottom: none;
+}
+
+.breakdown-label {
+  color: #374151;
+  font-weight: 500;
+}
+
+.breakdown-amount {
+  color: #059669;
+  font-weight: 600;
+}
+
+/* Coûts par voiture */
+.car-costs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.car-cost-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.car-cost-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.car-cost-driver {
+  font-weight: 600;
+  color: #374151;
+}
+
+.car-cost-plate {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.car-cost-amount {
+  font-weight: 700;
+  color: #059669;
+}
+
+/* Informations de partage */
+.cost-sharing-info {
+  margin-top: 24px;
+}
+
+.sharing-card {
+  padding: 20px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  border-radius: 12px;
+  border: 1px solid #a7f3d0;
+}
+
+.sharing-card h4 {
+  margin: 0 0 12px 0;
+  color: #065f46;
+}
+
+.sharing-card p {
+  margin: 8px 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.sharing-note {
+  font-weight: 600;
+  color: #059669;
+}
+
+/* ===========================================
+   RESPONSIVE ADJUSTMENTS
+   =========================================== */
+
+@media (max-width: 640px) {
+  .shopping-stats,
+  .transport-stats {
+    flex-direction: column;
+    gap: 12px;
   }
   
-  .participants-grid {
+  .cost-cards {
     grid-template-columns: 1fr;
   }
   
-  .participant-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  .cost-card {
+    padding: 16px;
+    gap: 12px;
   }
   
-  .meal-header {
+  .cost-amount {
+    font-size: 1.25rem;
+  }
+  
+  .breakdown-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
   
-  .shopping-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  
-  .car-header {
+  .car-cost-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-  }
-  
-  .costs-grid {
-    grid-template-columns: 1fr;
   }
 }

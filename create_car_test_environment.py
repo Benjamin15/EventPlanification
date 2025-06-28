@@ -91,7 +91,7 @@ def create_test_environment():
         if response.status_code == 200:
             car = response.json()
             car_ids.append(car['id'])
-            print(f"  ✅ {car['license_plate']} - {car['driver_name']} ({car['max_passengers']} places, {car['fuel_cost']}€)")
+            print(f"  ✅ {car['license_plate']} - {car['driver_name']} ({car['max_passengers']} places, {car['fuel_cost']}$)")
         else:
             print(f"  ❌ {car_data['license_plate']}: {response.text}")
     
@@ -140,7 +140,7 @@ def create_test_environment():
         item_data["event_id"] = event_id
         response = requests.post(f"{API_BASE}/shopping/", json=item_data)
         if response.status_code == 200:
-            print(f"  ✅ {item_data['name']} - {item_data['price']}€")
+            print(f"  ✅ {item_data['name']} - {item_data['price']}$")
         else:
             print(f"  ❌ {item_data['name']}: {response.text}")
     

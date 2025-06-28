@@ -70,8 +70,8 @@ def test_api():
         response = requests.get(f"{base_url}/events/1/costs")
         if response.status_code == 200:
             costs = response.json()
-            print(f"   ✅ Succès: Coût total {costs['total_cost']}€")
-            print(f"      Coût par personne: {costs['cost_per_person']}€")
+            print(f"   ✅ Succès: Coût total {costs['total_cost']}$")
+            print(f"      Coût par personne: {costs['cost_per_person']}$")
         else:
             print(f"   ❌ Erreur: Status {response.status_code}")
     except Exception as e:

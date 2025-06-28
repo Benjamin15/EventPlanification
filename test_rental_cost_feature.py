@@ -54,8 +54,8 @@ def test_rental_cost_feature():
         car = car_response.json()
         car_id = car["id"]
         print(f"✅ Voiture ajoutée avec succès: ID {car_id}")
-        print(f"   - Carburant: {car['fuel_cost']}€")
-        print(f"   - Location: {car.get('rental_cost', 'N/A')}€")
+        print(f"   - Carburant: {car['fuel_cost']}$")
+        print(f"   - Location: {car.get('rental_cost', 'N/A')}$")
         
     except Exception as e:
         print(f"❌ Erreur lors de l'ajout de la voiture: {e}")
@@ -71,12 +71,12 @@ def test_rental_cost_feature():
             
         costs = costs_response.json()
         print("✅ Calculs de coûts:")
-        print(f"   - Courses: {costs['total_shopping']}€")
-        print(f"   - Carburant: {costs['total_fuel']}€")
-        print(f"   - Location: {costs['total_rental']}€")
-        print(f"   - Transport total: {costs['total_transport']}€")
-        print(f"   - Coût total: {costs['total_cost']}€")
-        print(f"   - Par personne: {costs['cost_per_person']}€")
+        print(f"   - Courses: {costs['total_shopping']}$")
+        print(f"   - Carburant: {costs['total_fuel']}$")
+        print(f"   - Location: {costs['total_rental']}$")
+        print(f"   - Transport total: {costs['total_transport']}$")
+        print(f"   - Coût total: {costs['total_cost']}$")
+        print(f"   - Par personne: {costs['cost_per_person']}$")
         
         # Vérifier que le coût de location est inclus
         if costs['total_rental'] >= 150.0:
@@ -103,8 +103,8 @@ def test_rental_cost_feature():
         if rental_car:
             print(f"✅ Voiture avec location trouvée:")
             print(f"   - {rental_car['license_plate']} - {rental_car['driver_name']}")
-            print(f"   - Carburant: {rental_car['fuel_cost']}€")
-            print(f"   - Location: {rental_car.get('rental_cost', 'N/A')}€")
+            print(f"   - Carburant: {rental_car['fuel_cost']}$")
+            print(f"   - Location: {rental_car.get('rental_cost', 'N/A')}$")
         else:
             print("❌ Voiture avec location non trouvée")
             return False

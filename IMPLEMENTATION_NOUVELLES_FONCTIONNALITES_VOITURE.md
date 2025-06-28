@@ -86,17 +86,17 @@ curl -X GET http://localhost:8000/events/17/costs
 ## 📊 EXEMPLE D'UTILISATION
 
 ### Scénario : Weekend ski avec mise à jour des coûts
-1. **Création :** Alice crée une voiture, estime 75€ d'essence
+1. **Création :** Alice crée une voiture, estime 75$ d'essence
 2. **Départ :** Bob devient le conducteur, Alice devient passagère
-3. **Retour :** Coût réel d'essence = 85.50€ (plus élevé que prévu)
-4. **Calculs :** L'application utilise automatiquement 85.50€ pour le calcul par personne
+3. **Retour :** Coût réel d'essence = 85.50$ (plus élevé que prévu)
+4. **Calculs :** L'application utilise automatiquement 85.50$ pour le calcul par personne
 
 ### Résultat automatique
 ```
-Transport total : 205.50€
-- Carburant (réel) : 85.50€
-- Location : 120.00€
-Par personne : 68.50€
+Transport total : 205.50$
+- Carburant (réel) : 85.50$
+- Location : 120.00$
+Par personne : 68.50$
 ```
 
 ## 🎉 FONCTIONNALITÉS OPÉRATIONNELLES

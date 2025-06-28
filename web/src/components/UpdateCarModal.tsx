@@ -88,16 +88,16 @@ const UpdateCarModal: React.FC<UpdateCarModalProps> = ({
 
         <div className="car-info">
           <h3>🚗 {car.license_plate} - {car.driver_name}</h3>
-          <p>Coût d'essence estimé : {car.fuel_cost.toFixed(2)}€</p>
+          <p>Coût d'essence estimé : {car.fuel_cost.toFixed(2)}$</p>
           {car.rental_cost && car.rental_cost > 0 && (
-            <p>Coût de location : {car.rental_cost.toFixed(2)}€</p>
+            <p>Coût de location : {car.rental_cost.toFixed(2)}$</p>
           )}
         </div>
 
         <form onSubmit={handleSubmit} className="update-car-form">
           <div className="form-group">
             <label htmlFor="actual_fuel_cost">
-              ⛽ Coût d'essence réel (€)
+              ⛽ Coût d'essence réel ($)
               <span className="hint">Entrez le montant réel après avoir fait le plein</span>
             </label>
             <input

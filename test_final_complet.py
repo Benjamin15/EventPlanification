@@ -218,7 +218,7 @@ def test_complete_workflow():
             if response.status_code == 200:
                 updated_car = response.json()
                 print(f"✅ Coût réel mis à jour pour {updated_car['license_plate']}")
-                print(f"   📊 Estimé: {updated_car['fuel_cost']}€ → Réel: {updated_car['actual_fuel_cost']}€")
+                print(f"   📊 Estimé: {updated_car['fuel_cost']}$ → Réel: {updated_car['actual_fuel_cost']}$")
                 print("✅ CORRECTION 4: Mise à jour coûts réels fonctionnelle")
             else:
                 print(f"❌ Erreur mise à jour: {response.text}")
@@ -277,9 +277,9 @@ def test_complete_workflow():
         if costs_response.status_code == 200:
             costs = costs_response.json()
             print(f"✅ Coûts calculés:")
-            print(f"   🚗 Transport: {costs.get('total_transport', 0):.2f}€")
-            print(f"   🛒 Courses: {costs.get('total_shopping', 0):.2f}€")
-            print(f"   💳 Par personne: {costs.get('cost_per_person', 0):.2f}€")
+            print(f"   🚗 Transport: {costs.get('total_transport', 0):.2f}$")
+            print(f"   🛒 Courses: {costs.get('total_shopping', 0):.2f}$")
+            print(f"   💳 Par personne: {costs.get('cost_per_person', 0):.2f}$")
         else:
             print(f"❌ Erreur calcul coûts: {costs_response.text}")
     except Exception as e:

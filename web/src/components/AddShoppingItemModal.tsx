@@ -134,7 +134,7 @@ const AddShoppingItemModal: React.FC<AddShoppingItemModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label htmlFor="price">Prix unitaire (€)</label>
+              <label htmlFor="price">Prix unitaire ($)</label>
               <input
                 type="number"
                 id="price"

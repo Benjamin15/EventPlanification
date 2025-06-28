@@ -172,7 +172,7 @@ def validate_all_fixes():
                 if (updated_car.get('actual_fuel_cost') == 75.50 and 
                     updated_car.get('fuel_cost') == 50.0):
                     print("   ✅ Mise à jour coût réel : OK")
-                    print(f"       Estimé: {updated_car['fuel_cost']}€ → Réel: {updated_car['actual_fuel_cost']}€")
+                    print(f"       Estimé: {updated_car['fuel_cost']}$ → Réel: {updated_car['actual_fuel_cost']}$")
                     success_count += 1
                 else:
                     print(f"   ❌ Coûts incorrects : {updated_car}")

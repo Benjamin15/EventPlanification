@@ -156,7 +156,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label htmlFor="fuel_cost">Coût essence estimé (€)</label>
+              <label htmlFor="fuel_cost">Coût essence estimé ($)</label>
               <input
                 type="number"
                 id="fuel_cost"
@@ -171,7 +171,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({
             </div>
 
             <div className="form-group">
-              <label htmlFor="rental_cost">Coût de location (€) <span className="optional">(optionnel)</span></label>
+              <label htmlFor="rental_cost">Coût de location ($) <span className="optional">(optionnel)</span></label>
               <input
                 type="number"
                 id="rental_cost"

@@ -92,7 +92,7 @@ def test_car_features():
         print(f"✅ Voiture créée avec conducteur assigné:")
         print(f"   - Plaque: {car['license_plate']}")
         print(f"   - Conducteur: {car['driver_name']} (ID: {car.get('driver_id')})")
-        print(f"   - Coût essence estimé: {car['fuel_cost']}€")
+        print(f"   - Coût essence estimé: {car['fuel_cost']}$")
     except Exception as e:
         print(f"❌ Erreur lors de la création de la voiture: {e}")
         return False
@@ -118,9 +118,9 @@ def test_car_features():
         else:
             costs = costs_response.json()
             print(f"✅ Coûts initiaux calculés:")
-            print(f"   - Transport total: {costs['total_transport']}€")
-            print(f"   - Carburant: {costs['total_fuel']}€")
-            print(f"   - Location: {costs['total_rental']}€")
+            print(f"   - Transport total: {costs['total_transport']}$")
+            print(f"   - Carburant: {costs['total_fuel']}$")
+            print(f"   - Location: {costs['total_rental']}$")
     except Exception as e:
         print(f"❌ Erreur lors du calcul des coûts: {e}")
     
@@ -141,9 +141,9 @@ def test_car_features():
         
         updated_car = update_response.json()
         print(f"✅ Coût d'essence mis à jour:")
-        print(f"   - Estimé: {updated_car['fuel_cost']}€")
-        print(f"   - Réel: {updated_car.get('actual_fuel_cost')}€")
-        print(f"   - Différence: {updated_car.get('actual_fuel_cost', 0) - updated_car['fuel_cost']:+.2f}€")
+        print(f"   - Estimé: {updated_car['fuel_cost']}$")
+        print(f"   - Réel: {updated_car.get('actual_fuel_cost')}$")
+        print(f"   - Différence: {updated_car.get('actual_fuel_cost', 0) - updated_car['fuel_cost']:+.2f}$")
     except Exception as e:
         print(f"❌ Erreur lors de la mise à jour: {e}")
         return False
@@ -157,10 +157,10 @@ def test_car_features():
         else:
             final_costs = costs_response.json()
             print(f"✅ Coûts finaux calculés:")
-            print(f"   - Transport total: {final_costs['total_transport']}€")
-            print(f"   - Carburant (réel): {final_costs['total_fuel']}€")
-            print(f"   - Location: {final_costs['total_rental']}€")
-            print(f"   - Par personne: {final_costs['cost_per_person']}€")
+            print(f"   - Transport total: {final_costs['total_transport']}$")
+            print(f"   - Carburant (réel): {final_costs['total_fuel']}$")
+            print(f"   - Location: {final_costs['total_rental']}$")
+            print(f"   - Par personne: {final_costs['cost_per_person']}$")
     except Exception as e:
         print(f"❌ Erreur lors du calcul des coûts finaux: {e}")
     
@@ -198,9 +198,9 @@ def test_car_features():
                 print(f"✅ État final de la voiture:")
                 print(f"   - {final_car['license_plate']} - {final_car['driver_name']}")
                 print(f"   - Conducteur ID: {final_car.get('driver_id')}")
-                print(f"   - Coût essence estimé: {final_car['fuel_cost']}€")
-                print(f"   - Coût essence réel: {final_car.get('actual_fuel_cost')}€")
-                print(f"   - Coût location: {final_car.get('rental_cost')}€")
+                print(f"   - Coût essence estimé: {final_car['fuel_cost']}$")
+                print(f"   - Coût essence réel: {final_car.get('actual_fuel_cost')}$")
+                print(f"   - Coût location: {final_car.get('rental_cost')}$")
                 print(f"   - Passagers: {len(final_car.get('passengers', []))}")
     except Exception as e:
         print(f"❌ Erreur lors de la vérification finale: {e}")

@@ -2,13 +2,19 @@ import React, { useState, useCallback } from 'react';
 import { Event, Participant, CostSummary, ActivityCreate, ShoppingItemCreate, CarCreate, CarUpdate, Car } from '../types';
 import { apiService } from '../services/api';
 import { realtimeService, EventUpdate } from '../services/realtime';
+import TabNavigation, { TabId } from './TabNavigation';
+import EventInfoTab from './EventInfoTab';
+import ParticipantsTab from './ParticipantsTab';
+import ActivitiesTab from './ActivitiesTab';
+import ShoppingTab from './ShoppingTab';
+import TransportTab from './TransportTab';
+import CostsTab from './CostsTab';
 import AddActivityModal from './AddActivityModal';
 import AddShoppingItemModal from './AddShoppingItemModal';
 import AddCarModal from './AddCarModal';
 import AssignCarModal from './AssignCarModal';
 import UpdateCarModal from './UpdateCarModal';
 import Notification from './Notification';
-import MobileNavigation from './MobileNavigation';
 import './EventDashboard.css';
 
 interface EventDashboardProps {
@@ -31,7 +37,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   const [isUpdateCarModalOpen, setIsUpdateCarModalOpen] = useState(false);
   const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<Car | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentMobileView, setCurrentMobileView] = useState<'info' | 'activities' | 'shopping' | 'transport' | 'costs'>('info');
+  const [currentTab, setCurrentTab] = useState<TabId>('info');
   const [notification, setNotification] = useState<{
     message: string;
     type: 'success' | 'error' | 'info';
@@ -46,7 +52,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   const handleRealtimeUpdate = useCallback((update: EventUpdate) => {
     const updateMessages = {
       participant_joined: `${update.data.name} a rejoint l'événement`,
-      meal_added: `Nouveau repas ajouté: ${update.data.name}`,
+      activity_added: `Nouvelle activité ajoutée: ${update.data.name}`,
       shopping_item_added: `Article ajouté: ${update.data.name}`,
       car_added: `Voiture ajoutée: ${update.data.driver_name}`,
       shopping_item_updated: `Article mis à jour: ${update.data.name}`,
@@ -70,46 +76,63 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
     return unsubscribe;
   }, [event.id, handleRealtimeUpdate]);
 
-  // Fonction pour rendre les sections selon la vue mobile
-  const renderSection = (sectionType: string, content: React.ReactNode) => {
-    const isMobile = window.innerWidth <= 768;
-    const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
-    
-    if (isMobile && currentMobileView !== sectionType) {
-      return null;
+  // Fonction pour rendre le contenu de l'onglet actuel
+  const renderTabContent = () => {
+    switch (currentTab) {
+      case 'info':
+        return <EventInfoTab event={event} />;
+      
+      case 'participants':
+        return <ParticipantsTab participants={event.participants || []} />;
+      
+      case 'activities':
+        return (
+          <ActivitiesTab 
+            activities={event.activities || []}
+            onAddActivity={() => setIsAddActivityModalOpen(true)}
+            isLoading={isLoading}
+          />
+        );
+      
+      case 'shopping':
+        return (
+          <ShoppingTab 
+            shoppingItems={event.shopping_items || []}
+            participant={participant}
+            onAddItem={() => setIsAddShoppingModalOpen(true)}
+            onMarkAsBought={handleMarkAsBought}
+            isLoading={isLoading}
+          />
+        );
+      
+      case 'transport':
+        return (
+          <TransportTab 
+            cars={event.cars || []}
+            participants={event.participants || []}
+            onAddCar={() => setIsAddCarModalOpen(true)}
+            onAssignCar={() => setIsAssignCarModalOpen(true)}
+            onUpdateCar={handleOpenUpdateCarModal}
+            isLoading={isLoading}
+          />
+        );
+      
+      case 'costs':
+        return (
+          <CostsTab 
+            costs={costs}
+            shoppingItems={event.shopping_items || []}
+            cars={event.cars || []}
+            participantCount={event.participants?.length || 0}
+          />
+        );
+      
+      default:
+        return <EventInfoTab event={event} />;
     }
-    
-    return content;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('fr-FR', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const totalShopping = (event.shopping_items || []).reduce(
-    (sum, item) => sum + item.price * item.quantity, 
-    0
-  );
-  const totalTransport = (event.cars || []).reduce((sum, car) => sum + car.fuel_cost + (car.rental_cost || 0), 0);
-  const costPerPerson = (event.participants || []).length > 0 
-    ? (totalShopping + totalTransport) / (event.participants || []).length 
-    : 0;
-
+  // Gestionnaires d'événements
   const handleAddActivity = async (activityData: ActivityCreate) => {
     setIsLoading(true);
     try {
@@ -186,8 +209,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   const handleRemoveFromCar = async (participantId: number) => {
     setIsLoading(true);
     try {
-      // Assigner à null pour retirer de la voiture
-      await apiService.assignCarToParticipant(participantId, 0); // 0 pour retirer
+      await apiService.assignCarToParticipant(participantId, 0);
       onEventUpdate();
       setNotification({
         message: 'Participant retiré de la voiture',
@@ -238,305 +260,16 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
 
   return (
     <div className="dashboard">
-      {/* Navigation mobile */}
-      <MobileNavigation 
-        currentView={currentMobileView}
-        onViewChange={setCurrentMobileView}
+      {/* Navigation par onglets */}
+      <TabNavigation 
+        activeTab={currentTab}
+        onTabChange={setCurrentTab}
         eventName={event.name}
       />
       
-      <header className="dashboard-header">
-        <div className="header-content">
-          <h1 className="event-title">{event.name}</h1>
-          <p className="welcome-text">Bienvenue, {participant.name}! 👋</p>
-          {event.start_date && event.end_date && (
-            <p className="event-dates">
-              📅 Du {formatDate(event.start_date)} au {formatDate(event.end_date)}
-            </p>
-          )}
-        </div>
-      </header>
-
+      {/* Contenu de l'onglet actuel */}
       <main className="dashboard-content">
-        {/* Informations sur l'événement */}
-        {renderSection('info', (
-          <section className="dashboard-section">
-            <h2 className="section-title">📍 Informations sur le chalet</h2>
-            <div className="info-grid">
-              {event.location && (
-                <div className="info-item">
-                  <span className="info-icon">🏠</span>
-                  <span className="info-text">{event.location}</span>
-                </div>
-              )}
-              {event.chalet_link && (
-                <div className="info-item">
-                  <span className="info-icon">🔗</span>
-                  <a 
-                    href={event.chalet_link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="info-link"
-                  >
-                    Lien du chalet
-                  </a>
-                </div>
-              )}
-              {event.description && (
-                <div className="info-item description">
-                  <span className="info-icon">📝</span>
-                  <span className="info-text">{event.description}</span>
-                </div>
-              )}
-            </div>
-          </section>
-        ))}
-
-        {/* Participants */}
-        {renderSection('info', (
-          <section className="dashboard-section">
-            <h2 className="section-title">
-              👥 Participants ({(event.participants || []).length})
-            </h2>
-            <div className="participants-grid">
-              {(event.participants || []).map((p) => {
-                // Trouver si le participant est conducteur d'une voiture
-                const drivenCar = (event.cars || []).find(c => c.driver_id === p.id);
-                // Trouver si le participant est passager d'une voiture
-                const passengerCar = (event.cars || []).find(c => c.id === p.car_id);
-                
-                return (
-                  <div key={p.id} className="participant-card">
-                    <div className="participant-info">
-                      <span className="participant-name">{p.name}</span>
-                      {drivenCar && (
-                        <span className="driver-badge">👨‍✈️ Conducteur</span>
-                      )}
-                    </div>
-                    <span className="participant-transport">
-                      {drivenCar ? (
-                        `🚗 Conduit ${drivenCar.license_plate}`
-                      ) : passengerCar ? (
-                        `🚗 Passager ${passengerCar.license_plate}`
-                      ) : (
-                        '🚶 Pas de voiture'
-                      )}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        ))}
-
-        {/* Activités */}
-        {renderSection('activities', (
-          <section className="dashboard-section">
-            <div className="section-header">
-              <h2 className="section-title">🎯 Planning des activités</h2>
-              <button 
-                className="add-button"
-                onClick={() => setIsAddActivityModalOpen(true)}
-                disabled={isLoading}
-              >
-                ➕ Ajouter une activité
-              </button>
-            </div>
-            <div className="activities-list">
-              {(event.activities || []).length > 0 ? (
-                (event.activities || []).map((activity) => (
-                  <div key={activity.id} className="activity-card">
-                    <div className="activity-header">
-                      <span className="activity-type">
-                        {activity.activity_type === 'meal' && '🍽️'}
-                        {activity.activity_type === 'sport' && '⛷️'}
-                        {activity.activity_type === 'leisure' && '🎮'}
-                        {activity.activity_type === 'tourism' && '🏔️'}
-                        {activity.activity_type === 'other' && '📝'}
-                        {activity.name}
-                      </span>
-                      {activity.date && (
-                        <span className="activity-date">{formatDateTime(activity.date)}</span>
-                      )}
-                    </div>
-                    {activity.description && (
-                      <p className="activity-description">{activity.description}</p>
-                    )}
-                    {activity.location && (
-                      <p className="activity-location">📍 {activity.location}</p>
-                    )}
-                    {activity.max_participants && (
-                      <p className="activity-participants">👥 Max {activity.max_participants} participants</p>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p className="empty-state">Aucune activité planifiée pour le moment</p>
-              )}
-            </div>
-          </section>
-        ))}
-
-        {/* Liste de courses */}
-        {renderSection('shopping', (
-          <section className="dashboard-section">
-            <div className="section-header">
-              <h2 className="section-title">🛒 Liste de courses</h2>
-              <button 
-                className="add-button"
-                onClick={() => setIsAddShoppingModalOpen(true)}
-                disabled={isLoading}
-              >
-                ➕ Ajouter un article
-              </button>
-            </div>
-            <div className="shopping-list">
-              {(event.shopping_items || []).length > 0 ? (
-                (event.shopping_items || []).map((item) => (
-                  <div 
-                    key={item.id} 
-                    className={`shopping-item ${item.is_bought ? 'bought' : ''}`}
-                  >
-                    <div className="item-info">
-                      <button
-                        className="item-checkbox"
-                        onClick={() => !item.is_bought && handleMarkAsBought(item.id)}
-                        disabled={item.is_bought || isLoading}
-                      >
-                        {item.is_bought ? '✅' : '⬜'}
-                      </button>
-                      <span className="item-name">{item.name}</span>
-                      <span className="item-category">({item.category})</span>
-                    </div>
-                    <div className="item-details">
-                      <span className="item-price">
-                        {item.price.toFixed(2)}€ × {item.quantity}
-                      </span>
-                      {item.bought_by && (
-                        <span className="bought-by">par {item.bought_by}</span>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="empty-state">Aucun article dans la liste de courses</p>
-              )}
-            </div>
-          </section>
-        ))}
-
-        {/* Transport */}
-        {renderSection('transport', (
-          <section className="dashboard-section">
-            <div className="section-header">
-              <h2 className="section-title">🚗 Organisation du transport</h2>
-              <div className="section-actions">
-                <button 
-                  className="add-button"
-                  onClick={() => setIsAddCarModalOpen(true)}
-                  disabled={isLoading}
-                >
-                  ➕ Ajouter une voiture
-                </button>
-                {(event.cars || []).length > 0 && (
-                  <button 
-                    className="add-button secondary"
-                    onClick={() => setIsAssignCarModalOpen(true)}
-                    disabled={isLoading}
-                  >
-                    👥 Gérer les passagers
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="cars-list">
-              {(event.cars || []).length > 0 ? (
-                (event.cars || []).map((car) => {
-                  const passengers = (event.participants || []).filter(p => p.car_id === car.id);
-                  return (
-                    <div key={car.id} className="car-card">
-                      <div className="car-header">
-                        <div className="car-title-section">
-                          <h3 className="car-title">
-                            🚗 {car.license_plate} - {car.driver_name}
-                          </h3>
-                          <span className="car-capacity">
-                            {passengers.length}/{car.max_passengers} places
-                          </span>
-                        </div>
-                        <button 
-                          className="update-car-button"
-                          onClick={() => handleOpenUpdateCarModal(car)}
-                          disabled={isLoading}
-                          title="Mettre à jour la voiture"
-                        >
-                          🔧
-                        </button>
-                      </div>
-                      <div className="car-details">
-                        <div className="car-costs">
-                          <span className="fuel-cost">
-                            ⛽ Essence: {car.fuel_cost.toFixed(2)}€
-                            {car.actual_fuel_cost !== null && car.actual_fuel_cost !== undefined && (
-                              <span className="actual-cost"> → Réel: {car.actual_fuel_cost.toFixed(2)}€</span>
-                            )}
-                          </span>
-                          {car.rental_cost && car.rental_cost > 0 && (
-                            <span className="rental-cost">🏠 Location: {car.rental_cost.toFixed(2)}€</span>
-                          )}
-                          {(car.fuel_cost > 0 || (car.rental_cost && car.rental_cost > 0)) && passengers.length > 0 && (
-                            <span className="cost-per-person">
-                              💰 Par personne: {(((car.actual_fuel_cost ?? car.fuel_cost) + (car.rental_cost || 0)) / (passengers.length + 1)).toFixed(2)}€
-                            </span>
-                          )}
-                        </div>
-                        {passengers.length > 0 && (
-                          <div className="passengers">
-                            <span className="passengers-label">Passagers:</span>
-                            <span className="passengers-list">
-                              {passengers.map(p => p.name).join(', ')}
-                            </span>
-                          </div>
-                        )}
-                        {passengers.length === 0 && (
-                          <p className="no-passengers-hint">
-                            👥 Aucun passager - Utilisez "Gérer les passagers" pour en ajouter
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="empty-state">Aucune voiture enregistrée</p>
-              )}
-            </div>
-          </section>
-        ))}
-
-        {/* Résumé des coûts */}
-        {renderSection('costs', (
-          <section className="dashboard-section costs-section">
-            <h2 className="section-title">💰 Résumé des coûts</h2>
-            <div className="costs-grid">
-              <div className="cost-item">
-                <span className="cost-icon">🛒</span>
-                <span className="cost-label">Courses</span>
-                <span className="cost-value">{totalShopping.toFixed(2)}€</span>
-              </div>
-              <div className="cost-item">
-                <span className="cost-icon">🚗</span>
-                <span className="cost-label">Transport</span>
-                <span className="cost-value">{totalTransport.toFixed(2)}€</span>
-              </div>
-              <div className="cost-item total">
-                <span className="cost-icon">💳</span>
-                <span className="cost-label">Par personne</span>
-                <span className="cost-value">{costPerPerson.toFixed(2)}€</span>
-              </div>
-            </div>
-          </section>
-        ))}
+        {renderTabContent()}
       </main>
 
       {/* Modales */}

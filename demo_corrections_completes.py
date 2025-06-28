@@ -103,9 +103,9 @@ def setup_complete_test_environment():
                 car_ids.append(car['id'])
                 print(f"✅ Voiture {car['license_plate']} créée")
                 print(f"   🚗 Conducteur: {car['driver_name']} (ID: {car['driver_id']})")
-                print(f"   ⛽ Coût essence: {car['fuel_cost']}€")
+                print(f"   ⛽ Coût essence: {car['fuel_cost']}$")
                 if car['rental_cost'] > 0:
-                    print(f"   🏠 Location: {car['rental_cost']}€")
+                    print(f"   🏠 Location: {car['rental_cost']}$")
             else:
                 print(f"❌ Erreur création voiture {car_info['license_plate']}: {response.text}")
         except Exception as e:
@@ -155,7 +155,7 @@ def setup_complete_test_environment():
             response = requests.post(f"{API_BASE}/shopping-items/", json=item_data)
             if response.status_code == 200:
                 item = response.json()
-                print(f"✅ Article ajouté: {item['name']} ({item['price']}€ x{item['quantity']})")
+                print(f"✅ Article ajouté: {item['name']} ({item['price']}$ x{item['quantity']})")
             else:
                 print(f"❌ Erreur ajout article: {response.text}")
         except Exception as e:
@@ -184,9 +184,9 @@ def setup_complete_test_environment():
             total_cost = total_transport + total_shopping
             cost_per_person = total_cost / len(event_full.get('participants', [])) if event_full.get('participants') else 0
             
-            print(f"   💰 Coût transport: {total_transport:.2f}€")
-            print(f"   🛒 Coût courses: {total_shopping:.2f}€")
-            print(f"   💳 Coût par personne: {cost_per_person:.2f}€")
+            print(f"   💰 Coût transport: {total_transport:.2f}$")
+            print(f"   🛒 Coût courses: {total_shopping:.2f}$")
+            print(f"   💳 Coût par personne: {cost_per_person:.2f}$")
             
             return event_name, event_id
         else:
@@ -218,8 +218,8 @@ def demonstrate_car_update_feature(event_name, car_ids):
         if response.status_code == 200:
             updated_car = response.json()
             print(f"✅ Coût d'essence mis à jour:")
-            print(f"   📊 Estimation: {updated_car['fuel_cost']}€")
-            print(f"   ✅ Coût réel: {updated_car['actual_fuel_cost']}€")
+            print(f"   📊 Estimation: {updated_car['fuel_cost']}$")
+            print(f"   ✅ Coût réel: {updated_car['actual_fuel_cost']}$")
         else:
             print(f"❌ Erreur mise à jour: {response.text}")
     except Exception as e:
