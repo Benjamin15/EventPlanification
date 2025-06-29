@@ -106,6 +106,8 @@ class ShoppingItem(Base):
     quantity = Column(Integer, default=1)
     is_bought = Column(Boolean, default=False)
     bought_by = Column(String, nullable=True)
+    assigned_to = Column(String, nullable=True)  # Qui est responsable de l'acheter
+    contributors = Column(String, nullable=True, default="tous")  # Qui contribue au paiement (JSON ou "tous")
     
     # Relations
     event = relationship("Event", back_populates="shopping_items")

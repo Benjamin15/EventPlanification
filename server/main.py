@@ -240,6 +240,45 @@ def mark_as_bought(item_id: int, bought_by: str, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Article marqué comme acheté"}
 
+@app.put("/shopping/{item_id}/unmark")
+def unmark_as_bought(item_id: int, db: Session = Depends(get_db)):
+    """Déselectionner un article (le marquer comme non acheté)"""
+    item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+    
+    item.is_bought = False
+    item.bought_by = None
+    db.commit()
+    return {"message": "Article marqué comme non acheté"}
+
+@app.put("/shopping/{item_id}", response_model=schemas.ShoppingItem)
+def update_shopping_item(item_id: int, item_update: schemas.ShoppingItemUpdate, db: Session = Depends(get_db)):
+    """Mettre à jour un article de courses (prix, responsable, etc.)"""
+    item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+    
+    # Mettre à jour uniquement les champs fournis
+    update_data = item_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(item, field, value)
+    
+    db.commit()
+    db.refresh(item)
+    return item
+
+@app.put("/shopping/{item_id}/assign")
+def assign_shopping_item(item_id: int, assigned_to: str, db: Session = Depends(get_db)):
+    """Assigner un responsable à un article de courses"""
+    item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+    
+    item.assigned_to = assigned_to
+    db.commit()
+    return {"message": f"Article assigné à {assigned_to}"}
+
 @app.get("/events/{event_id}/shopping", response_model=List[schemas.ShoppingItem])
 def get_shopping_list(event_id: int, db: Session = Depends(get_db)):
     return db.query(ShoppingItem).filter(ShoppingItem.event_id == event_id).all()
@@ -321,6 +360,114 @@ def calculate_costs(event_id: int, db: Session = Depends(get_db)):
         "total_cost": total_shopping + total_transport,
         "participant_count": participant_count,
         "cost_per_person": round(cost_per_person, 2)
+    }
+
+@app.get("/events/{event_id}/financial-balance")
+def calculate_financial_balance(event_id: int, db: Session = Depends(get_db)):
+    """Calculer l'équilibre financier entre participants"""
+    
+    # Récupérer tous les participants
+    participants = db.query(Participant).filter(Participant.event_id == event_id).all()
+    if not participants:
+        return {"error": "Aucun participant"}
+    
+    # Calculer les dépenses par participant
+    participant_expenses = {}
+    participant_contributions = {}
+    
+    for participant in participants:
+        participant_expenses[participant.name] = 0
+        participant_contributions[participant.name] = 0
+    
+    # 1. Calculer les dépenses (qui a acheté quoi)
+    shopping_items = db.query(ShoppingItem).filter(ShoppingItem.event_id == event_id).all()
+    for item in shopping_items:
+        if item.is_bought and item.bought_by:
+            cost = item.price * item.quantity
+            if item.bought_by in participant_expenses:
+                participant_expenses[item.bought_by] += cost
+    
+    # 2. Calculer les contributions attendues (qui doit payer pour quoi)
+    total_cost = 0
+    for item in shopping_items:
+        item_cost = item.price * item.quantity
+        total_cost += item_cost
+        
+        # Répartir le coût selon les contributeurs
+        if item.contributors == "tous" or not item.contributors:
+            # Tout le monde contribue de manière égale
+            contribution_per_person = item_cost / len(participants)
+            for participant in participants:
+                participant_contributions[participant.name] += contribution_per_person
+        else:
+            # Contributeurs spécifiques (format JSON ou liste séparée par virgules)
+            try:
+                import json
+                contributors = json.loads(item.contributors)
+            except:
+                contributors = [name.strip() for name in item.contributors.split(",")]
+            
+            if contributors:
+                contribution_per_person = item_cost / len(contributors)
+                for contributor in contributors:
+                    if contributor in participant_contributions:
+                        participant_contributions[contributor] += contribution_per_person
+    
+    # 3. Ajouter les coûts de transport (toujours partagés équitablement)
+    cars = db.query(Car).filter(Car.event_id == event_id).all()
+    total_transport = sum(
+        (car.actual_fuel_cost if car.actual_fuel_cost is not None else car.fuel_cost) + (car.rental_cost or 0)
+        for car in cars
+    )
+    transport_per_person = total_transport / len(participants)
+    for participant in participants:
+        participant_contributions[participant.name] += transport_per_person
+    
+    # 4. Calculer l'équilibre (différence entre dépenses et contributions)
+    balance = {}
+    for participant in participants:
+        name = participant.name
+        spent = participant_expenses[name]
+        owes = participant_contributions[name]
+        balance[name] = round(spent - owes, 2)  # Positif = créditeur, Négatif = débiteur
+    
+    # 5. Calculer les transferts recommandés
+    creditors = {name: amount for name, amount in balance.items() if amount > 0.01}
+    debtors = {name: -amount for name, amount in balance.items() if amount < -0.01}
+    
+    transfers = []
+    creditors_list = list(creditors.items())
+    debtors_list = list(debtors.items())
+    
+    i, j = 0, 0
+    while i < len(creditors_list) and j < len(debtors_list):
+        creditor, credit_amount = creditors_list[i]
+        debtor, debt_amount = debtors_list[j]
+        
+        transfer_amount = min(credit_amount, debt_amount)
+        transfers.append({
+            "from": debtor,
+            "to": creditor,
+            "amount": round(transfer_amount, 2)
+        })
+        
+        creditors_list[i] = (creditor, credit_amount - transfer_amount)
+        debtors_list[j] = (debtor, debt_amount - transfer_amount)
+        
+        if creditors_list[i][1] <= 0.01:
+            i += 1
+        if debtors_list[j][1] <= 0.01:
+            j += 1
+    
+    return {
+        "total_cost": round(total_cost + total_transport, 2),
+        "participant_balance": balance,
+        "recommended_transfers": transfers,
+        "summary": {
+            "total_shopping": round(total_cost, 2),
+            "total_transport": round(total_transport, 2),
+            "per_person_target": round((total_cost + total_transport) / len(participants), 2)
+        }
     }
 
 @app.post("/events/{event_id}/upload-image")

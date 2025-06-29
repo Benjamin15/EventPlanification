@@ -377,13 +377,25 @@
 
 .item-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   flex: 1;
 }
 
+.item-content {
+  flex: 1;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .item-checkbox {
   font-size: 1.1rem;
+  margin-top: 4px;
 }
 
 .item-name {
@@ -397,206 +409,77 @@
   font-style: italic;
 }
 
-.item-details {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.item-price {
-  font-weight: 600;
-  color: #27ae60;
-}
-
-.bought-by {
+.item-assigned {
   font-size: 0.85rem;
-  color: #7f8c8d;
-  font-style: italic;
-}
-
-.cars-list {
-  display: grid;
-  gap: 20px;
-}
-
-.car-card {
-  padding: 20px;
-  background-color: #f8f9fa;
+  color: #8b5cf6;
+  background: #f3e8ff;
+  padding: 2px 8px;
   border-radius: 12px;
-  border-left: 4px solid #f39c12;
-}
-
-.car-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.car-title-section {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
-.car-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.update-car-button {
-  padding: 8px 12px;
-  border: 2px solid #6b7280;
-  border-radius: 8px;
-  background: white;
-  color: #6b7280;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.update-car-button:hover:not(:disabled) {
-  border-color: #3b82f6;
-  color: #3b82f6;
-  background: #f0f9ff;
-  transform: scale(1.05);
-}
-
-.update-car-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.car-capacity {
-  font-size: 0.9rem;
-  color: #7f8c8d;
   font-weight: 500;
 }
 
-.car-details {
+.item-contributors {
+  font-size: 0.8rem;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  border: 1px solid #a7f3d0;
+}
+
+/* Styles pour l'édition des contributeurs */
+.contributors-field {
+  grid-column: 1 / -1; /* Prend toute la largeur */
+}
+
+.contributors-selection {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.fuel-cost {
-  font-weight: 600;
-  color: #f39c12;
-}
-
-.actual-cost {
-  font-weight: 700;
-  color: #27ae60;
-  font-size: 0.9em;
-}
-
-.rental-cost {
-  font-weight: 600;
-  color: #9b59b6;
-}
-
-.passengers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.passengers-label {
-  font-size: 0.9rem;
-  color: #7f8c8d;
-  font-weight: 500;
-}
-
-.passengers-list {
-  font-size: 0.9rem;
-  color: #2c3e50;
-}
-
-.costs-section {
-  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-  color: white;
-}
-
-.costs-section .section-title {
-  color: white;
-}
-
-.costs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.cost-item {
-  display: flex;
-  align-items: center;
   gap: 12px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
+  margin-top: 8px;
 }
 
-.cost-item.total {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+.contributor-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-.cost-icon {
-  font-size: 1.5rem;
-}
-
-.cost-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  flex: 1;
-}
-
-.cost-value {
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.cost-item.total .cost-value {
-  font-size: 1.4rem;
-}
-
-.empty-state {
-  text-align: center;
-  color: #7f8c8d;
-  font-style: italic;
-  padding: 40px 20px;
+.contributor-option input[type="radio"] {
   margin: 0;
 }
 
-.car-costs {
-  display: flex;
-  flex-direction: column;
+.specific-contributors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 8px;
-  margin-bottom: 12px;
+  margin-top: 8px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
-.cost-per-person {
-  font-weight: 600;
-  color: #16a085;
+.participant-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
 }
 
-.no-passengers-hint {
-  color: #7f8c8d;
-  font-style: italic;
-  margin: 8px 0 0 0;
-  font-size: 0.9rem;
+.participant-checkbox:hover {
+  background: #f1f5f9;
+}
+
+.participant-checkbox input[type="checkbox"] {
+  margin: 0;
 }
 
 /* ===========================================
@@ -754,7 +637,7 @@
   font-weight: 500;
 }
 
-/* Passenger tags in car cards */
+/* Passenger tags in car cards - ANCIENNE VERSION */
 .passenger-list {
   display: flex;
   flex-wrap: wrap;
@@ -770,6 +653,194 @@
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;
+}
+
+/* ===========================================
+   NOUVEAU DESIGN MODERNE POUR LES PASSAGERS
+   =========================================== */
+
+.capacity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.capacity-info {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.availability-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.availability-badge.available {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.availability-badge.full {
+  background: #fecaca;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.passengers-section {
+  margin-top: 12px;
+}
+
+.driver-seat {
+  margin-bottom: 20px;
+}
+
+.passengers-seats {
+  margin-top: 16px;
+}
+
+.passengers-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.seats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.seat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.seat-item.driver {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.seat-item.occupied {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.seat-item.empty {
+  background: #f8fafc;
+  color: #64748b;
+  border: 2px dashed #cbd5e1;
+  opacity: 0.7;
+}
+
+.seat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.seat-item.empty:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  opacity: 1;
+}
+
+.seat-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.seat-item.driver .seat-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.seat-item.occupied .seat-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.seat-item.empty .seat-icon {
+  background: #e2e8f0;
+}
+
+.seat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.seat-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seat-role {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.seat-item.driver .seat-role {
+  color: #dbeafe;
+}
+
+.seat-item.occupied .seat-role {
+  color: #dcfce7;
+}
+
+.seat-item.empty .seat-role {
+  color: #94a3b8;
+}
+
+/* Responsive design pour les sièges */
+@media (max-width: 768px) {
+  .seats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .seat-item {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .seat-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1.3rem;
+  }
+  
+  .capacity-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
 }
 
 /* ===========================================
@@ -1036,3 +1107,502 @@
   color: #6b7280;
   font-style: italic;
 }
+
+/* ===========================================
+   STYLES POUR L'ÉQUILIBRE FINANCIER
+   =========================================== */
+
+/* Overview des balances */
+.balance-overview {
+  margin-bottom: 32px;
+}
+
+.balance-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.balance-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.balance-card:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+}
+
+.balance-card.primary {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.balance-card.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+}
+
+.balance-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.balance-content {
+  flex: 1;
+}
+
+.balance-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.balance-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* Balance par participant */
+.participant-balances {
+  margin-bottom: 32px;
+}
+
+.subsection-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.balance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.balance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.balance-item.creditor {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+}
+
+.balance-item.debtor {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
+}
+
+.balance-item.balanced {
+  border-color: #6b7280;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.participant-name {
+  font-weight: 600;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.balance-status {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.balance-amount .amount {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.balance-amount .positive {
+  color: #059669;
+}
+
+.balance-amount .negative {
+  color: #dc2626;
+}
+
+.balance-amount .neutral {
+  color: #6b7280;
+}
+
+/* Transferts recommandés */
+.recommended-transfers {
+  margin-bottom: 32px;
+}
+
+.transfers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.transfer-item {
+  padding: 16px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fef7cd 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 12px;
+}
+
+.transfer-flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.transfer-from,
+.transfer-to {
+  font-weight: 600;
+  color: #374151;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.transfer-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.arrow {
+  font-size: 1.5rem;
+  color: #f59e0b;
+  font-weight: bold;
+}
+
+.transfer-amount {
+  font-weight: 700;
+  color: #f59e0b;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #fbbf24;
+  font-size: 0.9rem;
+}
+
+.transfers-note {
+  padding: 16px;
+  background: #f0f9ff;
+  border-radius: 8px;
+  border: 1px solid #bae6fd;
+}
+
+.transfers-note p {
+  margin: 0;
+  color: #0c4a6e;
+  line-height: 1.5;
+}
+
+/* État équilibré */
+.balanced-state {
+  margin: 32px 0;
+}
+
+.balanced-card {
+  text-align: center;
+  padding: 32px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  border: 2px solid #10b981;
+  border-radius: 16px;
+}
+
+.balanced-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.balanced-card h3 {
+  margin: 0 0 8px 0;
+  color: #065f46;
+  font-size: 1.5rem;
+}
+
+.balanced-card p {
+  margin: 0;
+  color: #047857;
+  font-size: 1.1rem;
+}
+
+/* Actions */
+.balance-actions {
+  text-align: center;
+}
+
+.refresh-button {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* États d'erreur et chargement */
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.error-state {
+  color: #dc2626;
+}
+
+.retry-button {
+  margin-left: 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* ===========================================
+   STYLES MODERNES POUR LES PARTICIPANTS - DÉSACTIVÉS
+   Commentés pour revenir à l'ancien design simple
+   =========================================== */
+
+/* 
+.participant-card.modern {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.participant-card.modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.15);
+  border-color: #cbd5e1;
+}
+
+.participant-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.avatar-emoji {
+  font-size: 1.5rem;
+}
+
+.participant-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.participant-card.modern .participant-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.participant-card.modern .participant-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.participant-card.modern .participant-join-date {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.participant-transport-info {
+  margin-top: 8px;
+}
+
+.transport-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.transport-card.driver-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.transport-card.passenger-card {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.transport-card.none-card {
+  background: #f8fafc;
+  color: #64748b;
+  border: 2px dashed #cbd5e1;
+}
+
+.transport-icon {
+  font-size: 1.3rem;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.transport-card.driver-card .transport-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.transport-card.passenger-card .transport-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.transport-card.none-card .transport-icon {
+  background: #e2e8f0;
+}
+
+.transport-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.transport-primary {
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transport-secondary {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.transport-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.transport-badge.driver {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.transport-badge.passenger {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.transport-badge.none {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .participant-card.modern {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .participant-avatar {
+    align-self: center;
+  }
+  
+  .transport-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .transport-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1.1rem;
+  }
+  
+  .transport-badge {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+}
+*/

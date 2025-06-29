@@ -98,11 +98,21 @@ class ShoppingItemBase(BaseModel):
 class ShoppingItemCreate(ShoppingItemBase):
     event_id: int
 
+class ShoppingItemUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+    quantity: Optional[int] = None
+    assigned_to: Optional[str] = None
+    contributors: Optional[str] = None
+
 class ShoppingItem(ShoppingItemBase):
     id: int
     event_id: int
     is_bought: bool = False
     bought_by: Optional[str] = None
+    assigned_to: Optional[str] = None
+    contributors: Optional[str] = "tous"
     
     class Config:
         from_attributes = True
@@ -152,6 +162,7 @@ class EventPhoto(EventPhotoBase):
 class EventFull(Event):
     participants: List[Participant] = []
     meals: List[Meal] = []
+    activities: List[Activity] = []
     shopping_items: List[ShoppingItem] = []
     cars: List[Car] = []
     photos: List[EventPhoto] = []

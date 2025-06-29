@@ -21,23 +21,23 @@ const ParticipantsTab: React.FC<ParticipantsTabProps> = ({ participants, cars })
     // Vérifier si la personne est conductrice d'une voiture (priorité sur passager)
     const drivenCar = cars.find(car => car.driver_id === participant.id);
     if (drivenCar) {
-      return {
-        type: 'driver',
-        car: drivenCar,
-        message: `🚗 Conduit ${drivenCar.license_plate}`,
-        badge: '👨‍✈️ Conducteur'
-      };
+    return {
+      type: 'driver',
+      car: drivenCar,
+      message: `🚗 ${drivenCar.license_plate}`,
+      badge: '👨‍✈️ Conducteur'
+    };
     }
 
     // Vérifier si la personne est passagère d'une voiture (mais pas conductrice)
     const passengerCar = cars.find(car => car.id === participant.car_id && car.driver_id !== participant.id);
     if (passengerCar) {
-      return {
-        type: 'passenger',
-        car: passengerCar,
-        message: `🚗 Passager ${passengerCar.license_plate}`,
-        badge: null
-      };
+    return {
+      type: 'passenger',
+      car: passengerCar,
+      message: `🚗 ${passengerCar.license_plate}`,
+      badge: '🧑‍💼 Passager'
+    };
     }
 
     // Aucune voiture assignée
@@ -77,16 +77,6 @@ const ParticipantsTab: React.FC<ParticipantsTabProps> = ({ participants, cars })
                   <span className={`transport-status ${transportStatus.type}`}>
                     {transportStatus.message}
                   </span>
-                  {transportStatus.car && (
-                    <div className="car-details">
-                      <span className="car-info">
-                        {transportStatus.type === 'driver' 
-                          ? `${transportStatus.car.max_passengers} places` 
-                          : `Conducteur: ${transportStatus.car.driver_name}`
-                        }
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
             );

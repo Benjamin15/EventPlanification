@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Event, Participant, CostSummary, ActivityCreate, ShoppingItemCreate, CarCreate, CarUpdate, Car } from '../types';
+import { Event, Participant, CostSummary, ActivityCreate, ShoppingItemCreate, ShoppingItemUpdate, CarCreate, CarUpdate, Car } from '../types';
 import { apiService } from '../services/api';
 import { realtimeService, EventUpdate } from '../services/realtime';
 import TabNavigation, { TabId } from './TabNavigation';
@@ -9,6 +9,7 @@ import ActivitiesTab from './ActivitiesTab';
 import ShoppingTab from './ShoppingTab';
 import TransportTab from './TransportTab';
 import CostsTab from './CostsTab';
+import FinancialBalanceTab from './FinancialBalanceTab';
 import AddActivityModal from './AddActivityModal';
 import AddShoppingItemModal from './AddShoppingItemModal';
 import AddCarModal from './AddCarModal';
@@ -98,9 +99,13 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
         return (
           <ShoppingTab 
             shoppingItems={event.shopping_items || []}
+            participants={event.participants || []}
             participant={participant}
             onAddItem={() => setIsAddShoppingModalOpen(true)}
             onMarkAsBought={handleMarkAsBought}
+            onUnmarkAsBought={handleUnmarkAsBought}
+            onUpdateItem={handleUpdateShoppingItem}
+            onAssignItem={handleAssignShoppingItem}
             isLoading={isLoading}
           />
         );
@@ -119,11 +124,9 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
       
       case 'costs':
         return (
-          <CostsTab 
-            costs={costs}
-            shoppingItems={event.shopping_items || []}
-            cars={event.cars || []}
-            participantCount={event.participants?.length || 0}
+          <FinancialBalanceTab 
+            eventId={event.id}
+            participants={event.participants || []}
           />
         );
       
@@ -166,6 +169,73 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
       onEventUpdate();
     } catch (error) {
       console.error('Error marking item as bought:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUnmarkAsBought = async (itemId: number) => {
+    setIsLoading(true);
+    try {
+      await apiService.unmarkItemAsBought(itemId);
+      onEventUpdate();
+      setNotification({
+        message: 'Article déselectionné avec succès',
+        type: 'info',
+        isVisible: true
+      });
+    } catch (error) {
+      console.error('Error unmarking item as bought:', error);
+      setNotification({
+        message: 'Erreur lors de la déselection de l\'article',
+        type: 'error',
+        isVisible: true
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateShoppingItem = async (itemId: number, updates: ShoppingItemUpdate) => {
+    setIsLoading(true);
+    try {
+      await apiService.updateShoppingItem(itemId, updates);
+      onEventUpdate();
+      setNotification({
+        message: 'Article mis à jour avec succès',
+        type: 'success',
+        isVisible: true
+      });
+    } catch (error) {
+      console.error('Error updating shopping item:', error);
+      setNotification({
+        message: 'Erreur lors de la mise à jour de l\'article',
+        type: 'error',
+        isVisible: true
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAssignShoppingItem = async (itemId: number, assignedTo: string) => {
+    setIsLoading(true);
+    try {
+      await apiService.assignShoppingItem(itemId, assignedTo);
+      onEventUpdate();
+      setNotification({
+        message: `Article assigné à ${assignedTo}`,
+        type: 'success',
+        isVisible: true
+      });
+    } catch (error) {
+      console.error('Error assigning shopping item:', error);
+      setNotification({
+        message: 'Erreur lors de l\'assignation de l\'article',
+        type: 'error',
+        isVisible: true
+      });
     } finally {
       setIsLoading(false);
     }

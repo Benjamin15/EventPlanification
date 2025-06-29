@@ -22,6 +22,17 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
     });
   };
 
+  // Trier les activités par date (plus anciennes en premier, sans date à la fin)
+  const sortedActivities = [...activities].sort((a, b) => {
+    // Si une activité n'a pas de date, la mettre à la fin
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    
+    // Comparer les dates
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+
   return (
     <div className="tab-content">
       <section className="dashboard-section">
@@ -37,8 +48,8 @@ const ActivitiesTab: React.FC<ActivitiesTabProps> = ({
         </div>
         
         <div className="activities-list">
-          {activities.length > 0 ? (
-            activities.map((activity) => (
+          {sortedActivities.length > 0 ? (
+            sortedActivities.map((activity) => (
               <div key={activity.id} className="activity-card">
                 <div className="activity-header">
                   <span className="activity-type">

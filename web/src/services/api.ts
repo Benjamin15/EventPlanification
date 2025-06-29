@@ -6,6 +6,7 @@ import {
   ActivityAssignment,
   Meal, 
   ShoppingItem, 
+  ShoppingItemUpdate,
   Car, 
   CostSummary,
   EventCreate,
@@ -113,6 +114,19 @@ export const apiService = {
     await api.put(`/shopping/${itemId}/buy?bought_by=${encodeURIComponent(boughtBy)}`);
   },
 
+  async unmarkItemAsBought(itemId: number): Promise<void> {
+    await api.put(`/shopping/${itemId}/unmark`);
+  },
+
+  async updateShoppingItem(itemId: number, itemUpdate: ShoppingItemUpdate): Promise<ShoppingItem> {
+    const response = await api.put(`/shopping/${itemId}`, itemUpdate);
+    return response.data;
+  },
+
+  async assignShoppingItem(itemId: number, assignedTo: string): Promise<void> {
+    await api.put(`/shopping/${itemId}/assign?assigned_to=${encodeURIComponent(assignedTo)}`);
+  },
+
   async getShoppingList(eventId: number): Promise<ShoppingItem[]> {
     const response = await api.get(`/events/${eventId}/shopping`);
     return response.data;
@@ -142,6 +156,16 @@ export const apiService = {
   // Coûts
   async calculateCosts(eventId: number): Promise<CostSummary> {
     const response = await api.get(`/events/${eventId}/costs`);
+    return response.data;
+  },
+
+  async getCosts(eventId: number): Promise<CostSummary> {
+    const response = await api.get(`/events/${eventId}/costs`);
+    return response.data;
+  },
+
+  async getFinancialBalance(eventId: number): Promise<any> {
+    const response = await api.get(`/events/${eventId}/financial-balance`);
     return response.data;
   },
 

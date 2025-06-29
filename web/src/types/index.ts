@@ -59,6 +59,8 @@ export interface ShoppingItem {
   quantity: number;
   is_bought: boolean;
   bought_by?: string;
+  assigned_to?: string;
+  contributors?: string; // JSON string des participants ou "tous"
 }
 
 export interface Car {
@@ -154,6 +156,15 @@ export interface ShoppingItemCreate {
   category: string;
   price: number;
   quantity: number;
+}
+
+export interface ShoppingItemUpdate {
+  name?: string;
+  category?: string;
+  price?: number;
+  quantity?: number;
+  assigned_to?: string;
+  contributors?: string;
 }
 
 export interface CarCreate {

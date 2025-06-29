@@ -23,10 +23,23 @@ const TransportTab: React.FC<TransportTabProps> = ({
   );
 
   const totalPassengers = participants.filter(p => p.car_id).length;
-  const participantsWithoutCar = participants.filter(p => !p.car_id);
+  const participantsWithoutCar = participants.filter(p => {
+    // Exclure les participants qui sont conducteurs
+    const isDriver = cars.some(car => car.driver_id === p.id);
+    // Exclure les participants qui sont passagers
+    const isPassenger = p.car_id && !isDriver;
+    // Ne garder que ceux qui ne sont ni conducteurs ni passagers
+    return !isDriver && !isPassenger;
+  });
 
   const getCarPassengers = (carId: number) => {
+    // Récupérer uniquement les passagers (exclure le conducteur)
     return participants.filter(p => p.car_id === carId);
+  };
+
+  const getCarPassengersOnly = (carId: number, driverId: number) => {
+    // Récupérer uniquement les passagers (exclure le conducteur)
+    return participants.filter(p => p.car_id === carId && p.id !== driverId);
   };
 
   return (
@@ -74,7 +87,8 @@ const TransportTab: React.FC<TransportTabProps> = ({
         <div className="cars-list">
           {cars.length > 0 ? (
             cars.map((car) => {
-              const passengers = getCarPassengers(car.id);
+              const allCarParticipants = getCarPassengers(car.id); // Tous les participants de la voiture
+              const passengersOnly = getCarPassengersOnly(car.id, car.driver_id || 0); // Seulement les passagers
               return (
                 <div key={car.id} className="car-card">
                   <div className="car-header">
@@ -93,18 +107,60 @@ const TransportTab: React.FC<TransportTabProps> = ({
                   
                   <div className="car-details">
                     <div className="car-capacity">
-                      <span className="capacity-info">
-                        👥 {passengers.length}/{car.max_passengers} places
-                      </span>
-                      {passengers.length > 0 && (
-                        <div className="passenger-list">
-                          {passengers.map(passenger => (
-                            <span key={passenger.id} className="passenger-tag">
-                              {passenger.name}
-                            </span>
-                          ))}
+                      <div className="capacity-header">
+                        <span className="capacity-info">
+                          👥 {allCarParticipants.length}/{car.max_passengers} places
+                        </span>
+                        <span className={`availability-badge ${allCarParticipants.length >= car.max_passengers ? 'full' : 'available'}`}>
+                          {allCarParticipants.length >= car.max_passengers ? '🔴 Complet' : `🟢 ${car.max_passengers - allCarParticipants.length} place(s)`}
+                        </span>
+                      </div>
+                      
+                      {/* Affichage moderne des passagers */}
+                      <div className="passengers-section">
+                        <div className="driver-seat">
+                          <div className="seat-item driver">
+                            <div className="seat-icon">🚗</div>
+                            <div className="seat-info">
+                              <span className="seat-name">{car.driver_name}</span>
+                              <span className="seat-role">Conducteur</span>
+                            </div>
+                          </div>
                         </div>
-                      )}
+                        
+                        {car.max_passengers > 1 && (
+                          <div className="passengers-seats">
+                            <h4 className="passengers-title">Passagers</h4>
+                            <div className="seats-grid">
+                              {Array.from({ length: car.max_passengers - 1 }, (_, index) => {
+                                const passenger = passengersOnly[index]; // Utiliser seulement les passagers
+                                const isOccupied = passenger !== undefined;
+                                
+                                return (
+                                  <div key={index} className={`seat-item ${isOccupied ? 'occupied' : 'empty'}`}>
+                                    <div className="seat-icon">
+                                      {isOccupied ? '👤' : '💺'}
+                                    </div>
+                                    <div className="seat-info">
+                                      {isOccupied ? (
+                                        <>
+                                          <span className="seat-name">{passenger.name}</span>
+                                          <span className="seat-role">Passager</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <span className="seat-name">Place libre</span>
+                                          <span className="seat-role">Disponible</span>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     <div className="car-costs">
