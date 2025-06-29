@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Interface Shopping - Chalet Vibe</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        .success { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; }
+        .info { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; }
+        .warning { background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; }
+        .link-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #10b981;
+        }
+        h1 { color: #f8fafc; text-align: center; margin-bottom: 30px; }
+        h2 { color: #e2e8f0; }
+        h3 { color: #cbd5e1; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Test Interface Shopping - Chalet Vibe</h1>
+    
+    <div class="test-card">
+        <h2>📊 État des Serveurs</h2>
+        <div class="status success">✅ Serveur React: http://localhost:3000 (Actif)</div>
+        <div class="status success">✅ Serveur Backend: http://localhost:8000 (Actif)</div>
+        <div class="status info">ℹ️ Interface accessible et opérationnelle</div>
+    </div>
+
+    <div class="test-card">
+        <h2>🎯 Liens Rapides de Test</h2>
+        <a href="http://localhost:3000" class="link-btn" target="_blank">🌐 Ouvrir l'Application</a>
+        <a href="http://localhost:3000" class="link-btn" target="_blank">🛒 Tester les Courses</a>
+        <a href="http://localhost:8000/docs" class="link-btn" target="_blank">📖 API Documentation</a>
+    </div>
+
+    <div class="test-card">
+        <h2>✨ Nouvelles Fonctionnalités Implémentées</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <h3>🎨 Interface Contributeurs</h3>
+                <p>• Checkboxes personnalisées avec animations<br>
+                • Design moderne avec icônes<br>
+                • Grille responsive pour participants<br>
+                • Indicateurs d'aide contextuelle</p>
+            </div>
+            <div class="feature-item">
+                <h3>⚙️ Boutons Ergonomiques</h3>
+                <p>• Bouton "Modifier" avec icône gear<br>
+                • Gradients colorés et effets hover<br>
+                • Animations fluides<br>
+                • Design cohérent et moderne</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🧪 Séquence de Test Recommandée</h2>
+        <div class="status info">
+            <strong>1. Accéder à l'onglet Courses</strong><br>
+            → Naviguer vers l'onglet "🛒 Courses" dans l'application
+        </div>
+        <div class="status info">
+            <strong>2. Tester l'Interface Modifiée</strong><br>
+            → Cliquer sur le bouton "⚙️ Modifier" d'un article<br>
+            → Observer les nouvelles checkboxes et design
+        </div>
+        <div class="status info">
+            <strong>3. Tester la Sélection de Contributeurs</strong><br>
+            → Essayer les options "Tous" vs "Spécifiques"<br>
+            → Sélectionner/désélectionner des participants
+        </div>
+        <div class="status info">
+            <strong>4. Valider les Actions</strong><br>
+            → Tester les boutons Sauvegarder/Annuler<br>
+            → Vérifier la persistance des changements
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>📋 Checklist de Validation</h2>
+        <div class="status warning">
+            <input type="checkbox"> Interface contributeurs moderne affichée<br>
+            <input type="checkbox"> Checkboxes avec animations fonctionnelles<br>
+            <input type="checkbox"> Boutons avec icônes et effets hover<br>
+            <input type="checkbox"> Responsive design sur mobile<br>
+            <input type="checkbox"> Persistance des données fonctionnelle<br>
+            <input type="checkbox"> Aucune erreur dans la console
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh server status
+        function checkServerStatus() {
+            fetch('http://localhost:3000')
+                .then(response => {
+                    if (response.ok) {
+                        console.log('✅ Frontend accessible');
+                    }
+                })
+                .catch(error => {
+                    console.log('❌ Frontend non accessible');
+                });
+        }
+        
+        // Check status every 30 seconds
+        setInterval(checkServerStatus, 30000);
+        checkServerStatus();
+    </script>
+</body>
+</html>

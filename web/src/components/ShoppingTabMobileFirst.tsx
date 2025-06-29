@@ -47,7 +47,6 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
     (sum, item) => sum + item.price * item.quantity, 
     0
   );
-
   const boughtItems = shoppingItems.filter(item => item.is_bought);
 
   // Toggle expansion des détails d'un article
@@ -65,16 +64,14 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
   const openEditModal = (item: ShoppingItem, event: React.MouseEvent) => {
     event.stopPropagation(); // Empêcher le toggle des détails
     
-    // Déterminer les contributeurs actuels
-    let currentContributors: string[] = [];
+    // Déterminer les contributeurs actuels - tous par défaut selon vos spécifications
+    let currentContributors: string[] = participants.map(p => p.name);
     if (item.contributors && item.contributors !== 'tous') {
       try {
         currentContributors = JSON.parse(item.contributors);
       } catch {
         currentContributors = participants.map(p => p.name); // Fallback : tous
       }
-    } else {
-      currentContributors = participants.map(p => p.name); // Par défaut : tous
     }
 
     setEditModal({
@@ -135,14 +132,14 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
     }
   };
 
-  // Formatage du responsable/acheteur
+  // Formatage du responsable/acheteur pour affichage direct sur la carte
   const getResponsibleText = (item: ShoppingItem) => {
     if (item.is_bought && item.bought_by) {
       return `✅ Acheté par ${item.bought_by}`;
     } else if (item.assigned_to) {
-      return `👤 Responsable: ${item.assigned_to}`;
+      return `👤 ${item.assigned_to}`;
     }
-    return `👤 Pas de responsable`;
+    return null;
   };
 
   return (
@@ -177,19 +174,17 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
           </div>
         </div>
         
-        {/* Liste des articles - Style Mobile-First avec panels */}
+        {/* Liste des articles avec le nouveau design mobile-first */}
         <div className="shopping-list-mobile">
           {shoppingItems.length > 0 ? (
             shoppingItems.map((item) => (
               <div 
                 key={item.id} 
                 className={`shopping-item-card ${item.is_bought ? 'bought' : ''}`}
+                onClick={() => toggleItemExpansion(item.id)}
               >
-                {/* Header principal - toujours visible */}
-                <div 
-                  className="item-header-main"
-                  onClick={() => toggleItemExpansion(item.id)}
-                >
+                {/* Header principal de la carte - toujours visible */}
+                <div className="item-header-main">
                   <button
                     className="item-checkbox"
                     onClick={(e) => {
@@ -197,48 +192,45 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
                       handleToggleBought(item);
                     }}
                     disabled={isLoading}
-                    title={item.is_bought ? "Démarquer comme acheté" : "Marquer comme acheté"}
+                    title={item.is_bought ? "Cliquer pour déselectionner" : "Marquer comme acheté"}
                   >
-                    {item.is_bought ? '✅' : '☐'}
+                    {item.is_bought ? '✅' : '⬜'}
                   </button>
                   
                   <div className="item-main-info">
                     <div className="item-first-line">
-                      <span className="item-name">
-                        {item.name}
-                      </span>
+                      <span className="item-name">{item.name}</span>
                       <span className="item-category">({item.category})</span>
                     </div>
+                    
                     <div className="item-second-line">
-                      <div className="item-price-main">
-                        {(item.price * item.quantity).toFixed(2)}€
-                      </div>
-                      <div className="item-responsible">
-                        {getResponsibleText(item)}
-                      </div>
+                      <span className="item-price-main">{(item.price * item.quantity).toFixed(2)}€</span>
+                      {getResponsibleText(item) && (
+                        <span className="item-responsible">{getResponsibleText(item)}</span>
+                      )}
                     </div>
                   </div>
-                  
+
                   <button className="expand-icon">
                     {expandedItems.has(item.id) ? '🔽' : '▶️'}
                   </button>
                 </div>
 
-                {/* Détails expansibles */}
+                {/* Détails expandables */}
                 {expandedItems.has(item.id) && (
                   <div className="item-details-expanded">
                     <div className="details-row">
-                      <span className="detail-label">💰 Prix unitaire:</span>
+                      <span className="detail-label">Prix unitaire:</span>
                       <span className="detail-value">{item.price.toFixed(2)}€</span>
                     </div>
                     <div className="details-row">
-                      <span className="detail-label">📦 Quantité:</span>
+                      <span className="detail-label">Quantité:</span>
                       <span className="detail-value">{item.quantity}</span>
                     </div>
-                    {item.is_bought && item.bought_by && (
+                    {!item.is_bought && (
                       <div className="details-row">
-                        <span className="detail-label">✅ Acheté par:</span>
-                        <span className="detail-value">{item.bought_by}</span>
+                        <span className="detail-label">Responsable:</span>
+                        <span className="detail-value">{item.assigned_to || 'Non assigné'}</span>
                       </div>
                     )}
                     
@@ -254,16 +246,7 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
               </div>
             ))
           ) : (
-            <div className="empty-shopping-list">
-              <p>Aucun article dans la liste de courses.</p>
-              <button 
-                className="add-button secondary"
-                onClick={onAddItem}
-                disabled={isLoading}
-              >
-                ➕ Ajouter le premier article
-              </button>
-            </div>
+            <p className="empty-state">Aucun article dans la liste de courses</p>
           )}
         </div>
       </section>
@@ -273,100 +256,83 @@ const ShoppingTab: React.FC<ShoppingTabProps> = ({
         <div className="modal-overlay" onClick={closeEditModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>⚙️ Modifier l'article</h3>
+              <h3>Modifier {editModal.item?.name}</h3>
               <button className="modal-close" onClick={closeEditModal}>✕</button>
             </div>
             
             <div className="modal-body">
-              {editModal.item && (
-                <>
-                  <div className="modal-item-header">
-                    <span className="modal-item-name">{editModal.item.name}</span>
-                    <span className="modal-item-category">({editModal.item.category})</span>
-                  </div>
+              <div className="form-group">
+                <label>Prix unitaire (€)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={editModal.price}
+                  onChange={(e) => setEditModal({
+                    ...editModal,
+                    price: parseFloat(e.target.value) || 0
+                  })}
+                />
+              </div>
 
-                  <div className="form-group">
-                    <label>💰 Prix unitaire (€)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={editModal.price}
-                      onChange={(e) => setEditModal({
-                        ...editModal,
-                        price: parseFloat(e.target.value) || 0
-                      })}
-                    />
-                  </div>
+              <div className="form-group">
+                <label>Quantité</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={editModal.quantity}
+                  onChange={(e) => setEditModal({
+                    ...editModal,
+                    quantity: parseInt(e.target.value) || 1
+                  })}
+                />
+              </div>
 
-                  <div className="form-group">
-                    <label>📦 Quantité</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={editModal.quantity}
-                      onChange={(e) => setEditModal({
-                        ...editModal,
-                        quantity: parseInt(e.target.value) || 1
-                      })}
-                    />
-                  </div>
+              <div className="form-group">
+                <label>Responsable</label>
+                <input
+                  type="text"
+                  placeholder="Qui va l'acheter?"
+                  value={editModal.assignedTo}
+                  onChange={(e) => setEditModal({
+                    ...editModal,
+                    assignedTo: e.target.value
+                  })}
+                />
+              </div>
 
-                  <div className="form-group">
-                    <label>👤 Responsable (qui va l'acheter)</label>
-                    <input
-                      type="text"
-                      placeholder="Nom du responsable"
-                      value={editModal.assignedTo}
-                      onChange={(e) => setEditModal({
-                        ...editModal,
-                        assignedTo: e.target.value
-                      })}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>💰 Contributeurs (qui paie)</label>
-                    <div className="contributors-grid">
-                      {participants.map(p => (
-                        <label key={p.id} className="contributor-checkbox">
-                          <input
-                            type="checkbox"
-                            checked={editModal.contributors.includes(p.name)}
-                            onChange={() => toggleContributor(p.name)}
-                          />
-                          <span className="checkbox-custom"></span>
-                          <span className="participant-name">{p.name}</span>
-                        </label>
-                      ))}
-                    </div>
-                    <div className="contributors-info">
-                      {editModal.contributors.length === participants.length ? (
-                        <span className="contributors-all">✅ Tous les participants</span>
-                      ) : (
-                        <span className="contributors-specific">
-                          👥 {editModal.contributors.length} participant(s) sélectionné(s)
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+              <div className="form-group">
+                <label>Contributeurs (tous sélectionnés par défaut)</label>
+                <div className="contributors-grid">
+                  {participants.map(p => (
+                    <label key={p.id} className="contributor-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={editModal.contributors.includes(p.name)}
+                        onChange={() => toggleContributor(p.name)}
+                      />
+                      <span className="checkbox-custom"></span>
+                      <span className="participant-name">{p.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="modal-footer">
               <button 
-                className="cancel-btn"
-                onClick={closeEditModal}
-              >
-                ↩️ Annuler
-              </button>
-              <button 
                 className="save-btn"
                 onClick={saveChanges}
-                disabled={editModal.contributors.length === 0}
+                disabled={isLoading}
               >
                 💾 Sauvegarder
+              </button>
+              <button 
+                className="cancel-btn"
+                onClick={closeEditModal}
+                disabled={isLoading}
+              >
+                ↩️ Annuler
               </button>
             </div>
           </div>
