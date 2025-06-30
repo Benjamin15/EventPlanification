@@ -16,15 +16,15 @@ cd ..
 sleep 3
 
 # Démarrer l'application web
-echo "🌐 Démarrage de l'application web..."
-cd web
-if [ -f "package.json" ]; then
-    npm start &
-    WEB_PID=$!
-else
-    echo "⚠️  Application web non configurée"
-fi
-cd ..
+# echo "🌐 Démarrage de l'application web..."
+# cd web
+# if [ -f "package.json" ]; then
+#     npm start &
+#     WEB_PID=$!
+# else
+#     echo "⚠️  Application web non configurée"
+# fi
+# cd ..
 
 # Démarrer l'application mobile
 echo "📱 Démarrage de l'application mobile..."

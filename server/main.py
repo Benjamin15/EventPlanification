@@ -283,6 +283,17 @@ def assign_shopping_item(item_id: int, assigned_to: str, db: Session = Depends(g
 def get_shopping_list(event_id: int, db: Session = Depends(get_db)):
     return db.query(ShoppingItem).filter(ShoppingItem.event_id == event_id).all()
 
+@app.delete("/shopping/{item_id}")
+def delete_shopping_item(item_id: int, db: Session = Depends(get_db)):
+    """Supprimer un article de courses"""
+    item = db.query(ShoppingItem).filter(ShoppingItem.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Article non trouvé")
+    
+    db.delete(item)
+    db.commit()
+    return {"message": "Article supprimé"}
+
 # Routes pour les voitures
 @app.post("/cars/", response_model=schemas.Car)
 def create_car(car: schemas.CarCreate, db: Session = Depends(get_db)):
@@ -324,6 +335,22 @@ def update_car(car_id: int, car_update: schemas.CarUpdate, db: Session = Depends
     db.commit()
     db.refresh(car)
     return car
+
+@app.delete("/cars/{car_id}")
+def delete_car(car_id: int, db: Session = Depends(get_db)):
+    """Supprimer une voiture"""
+    car = db.query(Car).filter(Car.id == car_id).first()
+    if not car:
+        raise HTTPException(status_code=404, detail="Voiture non trouvée")
+    
+    # Libérer tous les participants assignés à cette voiture
+    participants = db.query(Participant).filter(Participant.car_id == car_id).all()
+    for participant in participants:
+        participant.car_id = None
+    
+    db.delete(car)
+    db.commit()
+    return {"message": "Voiture supprimée"}
 
 @app.get("/events/{event_id}/participants", response_model=List[schemas.Participant])
 def get_event_participants(event_id: int, db: Session = Depends(get_db)):
