@@ -107,6 +107,35 @@ def get_event(event_identifier: str, db: Session = Depends(get_db)):
 def list_events(db: Session = Depends(get_db)):
     return db.query(Event).all()
 
+@app.put("/events/{event_id}", response_model=schemas.Event)
+def update_event(event_id: int, event_update: schemas.EventCreate, db: Session = Depends(get_db)):
+    """Mettre à jour les informations d'un événement"""
+    event = db.query(Event).filter(Event.id == event_id).first()
+    
+    if not event:
+        raise HTTPException(status_code=404, detail="Événement non trouvé")
+    
+    # Vérifier si le nouveau nom n'est pas déjà utilisé par un autre événement
+    if event_update.name != event.name:
+        existing_event = db.query(Event).filter(
+            Event.name == event_update.name,
+            Event.id != event_id
+        ).first()
+        if existing_event:
+            raise HTTPException(
+                status_code=409, 
+                detail=f"Un événement avec le nom '{event_update.name}' existe déjà."
+            )
+    
+    # Mettre à jour tous les champs fournis
+    update_data = event_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(event, field, value)
+    
+    db.commit()
+    db.refresh(event)
+    return event
+
 # Routes pour les participants
 @app.post("/participants/", response_model=schemas.Participant)
 def join_event(participant: schemas.ParticipantCreate, db: Session = Depends(get_db)):

@@ -81,7 +81,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   const renderTabContent = () => {
     switch (currentTab) {
       case 'info':
-        return <EventInfoTab event={event} />;
+        return <EventInfoTab event={event} onEventUpdate={onEventUpdate} />;
       
       case 'participants':
         return <ParticipantsTab 

@@ -48,6 +48,11 @@ export const apiService = {
     return response.data;
   },
 
+  async updateEvent(eventId: number, eventData: Partial<Event>): Promise<Event> {
+    const response = await api.put(`/events/${eventId}`, eventData);
+    return response.data;
+  },
+
   async checkEventNameAvailability(eventName: string): Promise<{available: boolean, message: string}> {
     const response = await api.get(`/events/check-name/${encodeURIComponent(eventName)}`);
     return response.data;
